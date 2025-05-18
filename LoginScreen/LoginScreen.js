@@ -48,7 +48,7 @@ export default function Testing() {
       const { data, error } = await supabase
         .from('Users')
         .insert([{ username, password }])
-      console.log(error);
+
       if (error) {
         setError("Error creating user.");
       } else {
