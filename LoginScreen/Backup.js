@@ -1,176 +1,137 @@
-import React, { useState } from "react";
-import { 
-  StatusBar 
-} from "expo-status-bar";
+import React, { useState } from 'react';
+import { supabase } from '../server/supabase.js';
 import {
   StyleSheet,
-  Text,
   View,
   Image,
-  TextInput,
+  Text,
   Button,
-  Alert,
   TouchableOpacity,
+  Alert
 } from "react-native";
 import CustomInput from "./components/CustomInput";
+import CustomButton from './components/CustomButton';
+export default function Testing() {
+    const [error, setError] = useState("");
+    const [isLogin, setIsLogin] = useState(true);
+    const [username, setUser] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [users, setUsers] = useState([]);
+    const [loggedInUser, setLoggedInUser] = useState(null);
 
-export default function LoginScreen() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [users, setUsers] = useState([]);
-  const [loggedInUser, setLoggedInUser] = useState(null);
+    const handleSignUp = () => {
+        if (!username || !password || !confirmPassword) {
+        setError("Please fill all fields.");
+        return;
+        }
+        if (password !== confirmPassword) {
+        setError("Passwords don't match.");
+        return;
+        }
+        if (users.find((user) => user.username === username)) {
+        setError("User already exists.");
+        return;
+        }
+        setUsers([...users, { username, password }]);
+        setError("Account created! You can now log in.");
+        setIsLogin(true);
+        setUser("");
+        setPassword("");
+        setConfirmPassword("");
+    };
 
-  // Sign Up handler
-  const handleSignUp = () => {
-    if (!email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill all fields.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords don't match.");
-      return;
-    }
-    if (users.find((user) => user.email === email)) {
-      Alert.alert("Error", "User already exists.");
-      return;
-    }
-    setUsers([...users, { email, password }]);
-    Alert.alert("Success", "Account created! You can now log in.");
-    setIsLogin(true);
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-  };
+    const handleLogin = () => {
+        if (!username || !password) {
+        setError("Please enter username and password.");
+        return;
+        }
+        const user = users.find(
+        (u) => u.username === username && u.password === password
+        );
+        if (user) {
+        setLoggedInUser(user.username);
+        setUser("");
+        setPassword("");
+        } else {
+        setError("Invalid username or password.");
+        }
+    };
 
-  // Login handler
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please enter email and password.");
-      return;
-    }
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (user) {
-      setLoggedInUser(user.email);
-      setEmail("");
-      setPassword("");
-    } else {
-      Alert.alert("Error", "Invalid email or password.");
-    }
-  };
+    const handleLogout = () => {
+        setLoggedInUser(null);
+    };
 
-  // Logout handler
-  const handleLogout = () => {
-    setLoggedInUser(null);
-  };
+    if (loggedInUser) {
+        return (
+          <View style={styles.container}>
+            <Image
+              source={require("../assets/Renow.png")}
+              style={styles.logo}
+            />
+            <Text style={styles.welcomeText}>Welcome, {loggedInUser}!</Text>
+            <Button title="Logout" onPress={handleLogout} />
+          </View>
+        );
+      }
 
-  if (loggedInUser) {
-    // Logged in screen
     return (
       <View style={styles.container}>
-        <Image
-          source={require("../assets/Renow.png")}
-          style={styles.logo}
+
+        <Image 
+            source={require("../assets/Renow.png")} 
+            style={styles.logo}
+            resizeMode='contain'
         />
-  
-        <Text style={styles.welcomeText}>Welcome, {loggedInUser}!</Text>
-        <Button title="Logout" onPress={handleLogout} />
-        <StatusBar style="auto" />
+
+        {error !== "" && (
+          <Text style={{color: 'red'}}>
+            {error}
+          </Text>
+        )}
+        <CustomInput placeholder='Username' value={username} setValue={setUser} secure={false} icon={require("../assets/UserIcon.png")}/>
+
+        <CustomInput placeholder='Password' value={password} setValue={setPassword} secure={true} icon={require("../assets/PasswordIcon.png")}/>
+
+        {!isLogin && (
+                <CustomInput
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  setValue={setConfirmPassword}
+                  secure={true}
+                  icon={require("../assets/PasswordIcon.png")}
+                />
+              )}
+
+        <CustomButton onPress={isLogin ? handleLogin : handleSignUp} text={isLogin ? "Login" : "Sign Up"}/>
+        
+        <TouchableOpacity
+                onPress={() => setIsLogin(!isLogin)}
+                style={{ marginTop: 20 }}
+              >
+                <Text style={styles.toggleText}>
+                  {isLogin
+                    ? "Don't have an account? Sign Up"
+                    : "Already have an account? Login"}
+                </Text>
+              </TouchableOpacity>
       </View>
     );
-  }
-
-  // Login / Sign Up form screen
-  return (
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/Renow.png")}
-        style={styles.logo}
-      />
-      <Text style={styles.title}>{isLogin ? "Login" : "Sign Up"}</Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
-
-      {!isLogin && (
-        <TextInput
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          style={styles.input}
-          secureTextEntry
-        />
-      )}
-
-      <Button
-        title={isLogin ? "Login" : "Sign Up"}
-        onPress={isLogin ? handleLogin : handleSignUp}
-        color='maroon'
-      />
-      <TouchableOpacity
-        onPress={() => setIsLogin(!isLogin)}
-        style={{ marginTop: 20 }}
-      >
-        <Text style={styles.toggleText}>
-          {isLogin
-            ? "Don't have an account? Sign Up"
-            : "Already have an account? Login"}
-        </Text>
-      </TouchableOpacity>
-      <StatusBar style="auto" />
-    </View>
-  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    padding: 50,
+    marginVertical: 50
   },
-  logo: {
-    width: 700,
+  logo:{
+    width: 350,
     height: 300,
-
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 28,
-    marginBottom: 24,
-  },
-  input: {
-    width: "100%",
-    height: 48,
-    borderColor: "#999",
-    borderWidth: 1,
-    marginBottom: 12,
-    borderRadius: 6,
-    paddingHorizontal: 10,
   },
   toggleText: {
     textAlign: "center",
     color: "#007bff",
   },
-  welcomeText: {
-    fontSize: 22,
-    marginVertical: 24,
-  },
+
 });

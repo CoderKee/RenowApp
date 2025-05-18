@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../server/supabase.js';
 import {
   StyleSheet,
   View,
@@ -16,46 +17,77 @@ export default function Testing() {
     const [username, setUser] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [users, setUsers] = useState([]);
     const [loggedInUser, setLoggedInUser] = useState(null);
 
-    const handleSignUp = () => {
-        if (!username || !password || !confirmPassword) {
+    const handleSignUp = async () => {
+      setError("")
+      if (!username || !password || !confirmPassword) {
         setError("Please fill all fields.");
         return;
-        }
-        if (password !== confirmPassword) {
+      }
+      if (password !== confirmPassword) {
         setError("Passwords don't match.");
         return;
-        }
-        if (users.find((user) => user.username === username)) {
+      }
+
+      const { data: existingUser, error: fetchError } = await supabase
+        .from('Users')
+        .select('username')
+        .eq('username', username)
+        .single()
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        setError("Error checking user existence.");
+        return;
+      }
+      if (existingUser) {
         setError("User already exists.");
         return;
-        }
-        setUsers([...users, { username, password }]);
+      }
+
+      const { data, error } = await supabase
+        .from('Users')
+        .insert([{ username, password }])
+      console.log(error);
+      if (error) {
+        setError("Error creating user.");
+      } else {
         setError("Account created! You can now log in.");
         setIsLogin(true);
         setUser("");
         setPassword("");
         setConfirmPassword("");
+      }
     };
 
-    const handleLogin = () => {
-        if (!username || !password) {
+
+    const handleLogin = async () => {
+      setError("")
+      if (!username || !password) {
         setError("Please enter username and password.");
         return;
-        }
-        const user = users.find(
-        (u) => u.username === username && u.password === password
-        );
-        if (user) {
-        setLoggedInUser(user.username);
-        setUser("");
-        setPassword("");
-        } else {
+      }
+
+      const { data: user, error } = await supabase
+        .from('Users')
+        .select('username, password')
+        .eq('username', username)
+        .single()
+
+      if (error || !user) {
         setError("Invalid username or password.");
-        }
+        return;
+      }
+      if (user.password !== password) {
+        setError("Invalid username or password.");
+        return;
+      }
+
+      setLoggedInUser(user.username);
+      setUser("");
+      setPassword("");
     };
+
 
     const handleLogout = () => {
         setLoggedInUser(null);
@@ -134,3 +166,4 @@ const styles = StyleSheet.create({
   },
 
 });
+

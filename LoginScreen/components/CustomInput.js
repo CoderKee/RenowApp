@@ -15,7 +15,8 @@ const CustomInput = ({value, setValue, placeholder, secure, icon}) => {
         <View style = {styles.inner}>
             <Image source={icon} style = {styles.logo}/>
             <View style={styles.divider}></View>
-            <TextInput
+            <TextInput 
+                    style={{flex: 1, paddingVertical:12}}
                     placeholder={placeholder}
                     value={value}
                     onChangeText={setValue}
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     width: '100%',
-    height: '10%',
+    height: 50,
     borderColor: '#e8e8e8',
     borderWidth: 1,
     borderRadius: 5,
