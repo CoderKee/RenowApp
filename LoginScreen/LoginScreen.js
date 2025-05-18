@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../server/supabase.js';
+import { CommonActions } from '@react-navigation/native';
+
 import {
   StyleSheet,
   View,
@@ -11,7 +13,7 @@ import {
 } from "react-native";
 import CustomInput from "./components/CustomInput";
 import CustomButton from './components/CustomButton';
-export default function Testing() {
+export default function Testing({ navigation }) {
     const [error, setError] = useState("");
     const [isLogin, setIsLogin] = useState(true);
     const [username, setUser] = useState("");
@@ -83,9 +85,12 @@ export default function Testing() {
         return;
       }
 
-      setLoggedInUser(user.username);
-      setUser("");
-      setPassword("");
+      // setLoggedInUser(user.username);
+      // setUser("");
+      // setPassword("");
+
+      navigation.replace('MainTabs');
+
     };
 
 
