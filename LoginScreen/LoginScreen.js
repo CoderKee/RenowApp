@@ -87,9 +87,9 @@ export default function Testing({ navigation }) {
 
       // setLoggedInUser(user.username);
       // setUser("");
-      // setPassword("");
+      setPassword("");
 
-      navigation.replace('MainTabs');
+      navigation.replace('MainTabs', {username});
 
     };
 

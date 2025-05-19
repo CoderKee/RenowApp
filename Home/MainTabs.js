@@ -10,7 +10,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Using FontAwesome i
 
 const Tab = createBottomTabNavigator();
 
-export default function MainTabs() {
+export default function MainTabs({route}) {
+  const {username} = route.params;
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -32,13 +33,16 @@ export default function MainTabs() {
           return <Icon name={iconName} size={size} color={color} />;
         },
         // Customize active and inactive colors
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: 'maroon',
         tabBarInactiveTintColor: 'gray',
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Listing" component={ListingScreen} />
-      <Tab.Screen name="Create Listing" component={PostingScreen}/>
+      <Tab.Screen
+        name="Create Listing"
+        children={({ navigation }) => <PostingScreen username={username} navigation={navigation} />}
+      />
       <Tab.Screen name="Profile" 
         component={ProfileStack} 
         options={{ headerShown:false }}

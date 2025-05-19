@@ -29,7 +29,7 @@ const ProfileScreen = ({ navigation }) => {
             )
           }
         >
-          <Icon name="logout" size={24} color="black" />
+          <Icon name="logout" size={24} color="maroon" />
         </TouchableOpacity>
       ),
     });
