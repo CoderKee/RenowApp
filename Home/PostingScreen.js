@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import CustomDescriptionInput from './components/CustomDescriptionInput';
 import CustomTitleInput from './components/CustomTitleInput';
 import CustomPriceInput from './components/CustomPriceInput';
 import CustomButton from './components/CustomButton';
 import { supabase } from '../server/supabase.js';
 
-const PostingScreen = ({username, navigation}) => {
-  const[error, setError] = useState('');
+const PostingScreen = ({ username, navigation }) => {
+  const [error, setError] = useState('');
   const [images, setImages] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+
+  // Dropdown picker state
+  const [open, setOpen] = useState(false);
   const [serviceType, setServiceType] = useState('Cleaning');
+  const [items, setItems] = useState([
+    { label: 'Cleaning', value: 'Cleaning' },
+    { label: 'Installation', value: 'Installation' },
+    { label: 'Renovation', value: 'Renovation' },
+    { label: 'Repairs', value: 'Repairs' },
+    { label: 'Others', value: 'Others' },
+  ]);
 
   const addImage = () => {
+    // Your image picker logic here
   };
 
   const renderImage = ({ item }) => (
@@ -23,72 +34,70 @@ const PostingScreen = ({username, navigation}) => {
   );
 
   const postAsRequest = async () => {
-    setError("")
-      if (!title || !description || !price) {
-        setError("Please fill in all text fields.");
-        return;
-      }
-    
+    setError("");
+    if (!title || !description || !price) {
+      setError("Please fill in all text fields.");
+      return;
+    }
+
     const { data: user, error: userError } = await supabase
-    .from('Users')
-    .select('user_id')
-    .eq('username', username)
-    .single();
+      .from('Users')
+      .select('user_id')
+      .eq('username', username)
+      .single();
 
     if (userError || !user) {
       setError("User not found.");
       return;
     }
 
-    
     const { data, error } = await supabase
-            .from('Listings')
-            .insert([{ user_id: user.user_id, title, description, price, type: serviceType, request: true}])
-    
+      .from('Listings')
+      .insert([{ user_id: user.user_id, title, description, price, type: serviceType, request: true }]);
+
     if (error) {
       setError("Error creating listing.");
     } else {
       navigation.navigate('Listing');
       setError("");
-      setTitle('')
-      setDescription('')
-      setPrice('')
-      setServiceType('Cleaning')
+      setTitle('');
+      setDescription('');
+      setPrice('');
+      setServiceType('Cleaning');
     }
   };
 
   const postAsService = async () => {
-    setError("")
-      if (!title || !description || !price) {
-        setError("Please fill in all text fields.");
-        return;
-      }
-    
+    setError("");
+    if (!title || !description || !price) {
+      setError("Please fill in all text fields.");
+      return;
+    }
+
     const { data: user, error: userError } = await supabase
-    .from('Users')
-    .select('user_id')
-    .eq('username', username)
-    .single();
+      .from('Users')
+      .select('user_id')
+      .eq('username', username)
+      .single();
 
     if (userError || !user) {
       setError("User not found.");
       return;
     }
 
-    
     const { data, error } = await supabase
-            .from('Listings')
-            .insert([{ user_id: user.user_id, title, description, price, type: serviceType, request: false}])
-    
+      .from('Listings')
+      .insert([{ user_id: user.user_id, title, description, price, type: serviceType, request: false }]);
+
     if (error) {
       setError("Error creating listing.");
     } else {
       navigation.navigate('Listing');
       setError("");
-      setTitle('')
-      setDescription('')
-      setPrice('')
-      setServiceType('Cleaning')
+      setTitle('');
+      setDescription('');
+      setPrice('');
+      setServiceType('Cleaning');
     }
   };
 
@@ -108,39 +117,42 @@ const PostingScreen = ({username, navigation}) => {
       />
 
       <Text style={styles.label}>Title</Text>
-      <CustomTitleInput placeholder='Enter Title' value={title} setValue={setTitle}/>
+      <CustomTitleInput placeholder="Enter Title" value={title} setValue={setTitle} />
 
       <Text style={styles.label}>Description</Text>
-      <CustomDescriptionInput placeholder='Enter description' 
-                    value={description} 
-                    setValue={setDescription}/>
-
-
-      <Text style={styles.label}>Price</Text>
-      <CustomPriceInput placeholder='Enter price' value={price} setValue={setPrice}/>
-
+      <CustomDescriptionInput placeholder="Enter description" value={description} setValue={setDescription} />
+      
       <Text style={styles.label}>Type of Service</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={serviceType}
-          onValueChange={(itemValue) => setServiceType(itemValue)}
-        >
-          <Picker.Item label="Cleaning" value="Cleaning" />
-          <Picker.Item label="Installation" value="Installation" />
-          <Picker.Item label="Renovation" value="Renovation" />
-          <Picker.Item label="Repairs" value="Repairs" />
-          <Picker.Item label="Others" value="Others" />
-        </Picker>
-      </View>
+      <DropDownPicker
+        open={open}
+        value={serviceType}
+        items={items}
+        setOpen={setOpen}
+        setValue={setServiceType}
+        setItems={setItems}
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        /* [for listMode: Modal if there are multiple options in the future]
+        modalProps={{
+          animationType: 'fade',
+          transparent: false,
+        }}
+        modalTitle="Select service type"
+        modalAnimationType="slide"
+        */
+        listMode="SCROLLVIEW"  
+      />
+      <Text style={styles.label}>Price</Text>
+      <CustomPriceInput placeholder="Enter price" value={price} setValue={setPrice} />
+
       {error !== "" && (
-        <Text style={{color: 'red', marginTop: 20, marginBottom: -20}}>
-          {error}
-        </Text>
+        <Text style={{ color: 'red', marginTop: 20, marginBottom: -20 }}>{error}</Text>
       )}
+
       <View style={styles.buttonRow}>
-        <CustomButton text="Post as Request" onPress={postAsRequest} color='darkblue' />
+        <CustomButton text="Post as Request" onPress={postAsRequest} color="darkblue" />
         <View style={{ width: 10 }} />
-        <CustomButton text="Post as Service" onPress={postAsService} color='darkgreen' />
+        <CustomButton text="Post as Service" onPress={postAsService} color="darkgreen" />
       </View>
     </ScrollView>
   );
@@ -149,29 +161,26 @@ const PostingScreen = ({username, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    zIndex: 1000,
   },
   label: {
     marginTop: 15,
     marginBottom: 5,
     fontWeight: 'bold',
     fontSize: 16,
-    color: 'maroon'
+    color: 'maroon',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 16,
-  },
-  pickerContainer: {
-    height: 40,
-    borderWidth: 1,
+  dropdown: {
     borderColor: 'gray',
     borderRadius: 5,
     backgroundColor: 'white',
-    justifyContent: 'center'
+    zIndex: 1000,
+  },
+  dropdownContainer: {
+    borderColor: 'gray',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    zIndex: 1000,
   },
   buttonRow: {
     flexDirection: 'row',
