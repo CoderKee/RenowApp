@@ -5,7 +5,6 @@ import HomeScreen from './HomeScreen';
 import ListingScreen from './ListingScreen';
 import ProfileScreen from './ProfileScreen';
 import PostingScreen from './PostingScreen';
-import ProfileStack from './ProfileStack';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Using FontAwesome icons
 
 const Tab = createBottomTabNavigator();
@@ -37,15 +36,22 @@ export default function MainTabs({route}) {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Listing" component={ListingScreen} />
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+      />
+      <Tab.Screen 
+        name="Listing" 
+        component={ListingScreen} 
+      />
       <Tab.Screen
         name="Create Listing"
         children={({ navigation }) => <PostingScreen username={username} navigation={navigation} />}
       />
-      <Tab.Screen name="Profile" 
-        component={ProfileStack} 
-        options={{ headerShown:false }}
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        options={{ headerShown:true }}
       />
     </Tab.Navigator>
   );
