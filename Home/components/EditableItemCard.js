@@ -21,8 +21,6 @@ const ItemCard = ({ item, onDelete }) => {
 
   const handleDelete = async () => {
 
-    console.log(item.listing_id)
-
     const { data, error } = await supabase
       .from('Listings')
       .delete()
