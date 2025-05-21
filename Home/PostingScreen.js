@@ -7,14 +7,15 @@ import CustomPriceInput from './components/CustomPriceInput';
 import CustomButton from './components/CustomButton';
 import { supabase } from '../server/supabase.js';
 
-const PostingScreen = ({ username, navigation }) => {
+const PostingScreen = ({ route, navigation }) => {
+  const { username, item } = route?.params || {};
   const [error, setError] = useState('');
   const [images, setImages] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
 
-  // Dropdown picker state
+
   const [open, setOpen] = useState(false);
   const [serviceType, setServiceType] = useState('Cleaning');
   const [items, setItems] = useState([
@@ -24,16 +25,40 @@ const PostingScreen = ({ username, navigation }) => {
     { label: 'Repairs', value: 'Repairs' },
     { label: 'Others', value: 'Others' },
   ]);
+  const [postType, setPostType] = useState('Request');
+  const [postTypeOpen, setPostTypeOpen] = useState(false);
+  const [postTypeItems, setPostTypeItems] = useState([
+    { label: 'Request', value: 'Request' },
+    { label: 'Service', value: 'Service' },
+  ]);
+
+  useEffect(() => {
+    if (item) {
+      setTitle(item.title || '');
+      setDescription(item.description || '');
+      setPrice(item.price?.toString() || '');
+      setServiceType(item.type || 'Cleaning');
+      setImages(item.images || []);
+      setPostType(item.request ? 'Request' : 'Service')
+    } else {
+      setTitle('');
+      setDescription('');
+      setPrice('');
+      setServiceType('Cleaning');
+      setImages([]);
+      setPostType('Request')
+    }
+  }, [item]);
 
   const addImage = () => {
-    // Your image picker logic here
+
   };
 
   const renderImage = ({ item }) => (
     <Image source={{ uri: item }} style={styles.imageThumbnail} />
   );
 
-  const postAsRequest = async () => {
+  const post = async () => {
     setError("");
     if (!title || !description || !price) {
       setError("Please fill in all text fields.");
@@ -51,53 +76,38 @@ const PostingScreen = ({ username, navigation }) => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from('Listings')
-      .insert([{ user_id: user.user_id, title, description, price, type: serviceType, request: true }]);
+    const info = {
+      user_id: user.user_id,
+      title,
+      description,
+      price,
+      type: serviceType,
+      request: postType === 'Request' ? true : false,
+      created_at: new Date().toISOString(),
+    };
 
-    if (error) {
-      setError("Error creating listing.");
+    let result;
+    if (item && item.listing_id) {
+      result = await supabase
+        .from('Listings')
+        .update(info)
+        .eq('listing_id', item.listing_id);
     } else {
-      navigation.navigate('Listing');
+      result = await supabase
+        .from('Listings')
+        .insert([info]);
+    }
+
+    if (result.error) {
+      setError("Error saving listing.");
+    } else {
       setError("");
       setTitle('');
       setDescription('');
       setPrice('');
       setServiceType('Cleaning');
-    }
-  };
-
-  const postAsService = async () => {
-    setError("");
-    if (!title || !description || !price) {
-      setError("Please fill in all text fields.");
-      return;
-    }
-
-    const { data: user, error: userError } = await supabase
-      .from('Users')
-      .select('user_id')
-      .eq('username', username)
-      .single();
-
-    if (userError || !user) {
-      setError("User not found.");
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('Listings')
-      .insert([{ user_id: user.user_id, title, description, price, type: serviceType, request: false }]);
-
-    if (error) {
-      setError("Error creating listing.");
-    } else {
+      navigation.setParams({ item: undefined });
       navigation.navigate('Listing');
-      setError("");
-      setTitle('');
-      setDescription('');
-      setPrice('');
-      setServiceType('Cleaning');
     }
   };
 
@@ -149,10 +159,26 @@ const PostingScreen = ({ username, navigation }) => {
         <Text style={{ color: 'red', marginTop: 20, marginBottom: -20 }}>{error}</Text>
       )}
 
+      <Text style={styles.label}>Post as</Text>
+      <DropDownPicker
+        open={postTypeOpen}
+        value={postType}
+        items={postTypeItems}
+        setOpen={setPostTypeOpen}
+        setValue={setPostType}
+        setItems={setPostTypeItems}
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        listMode="SCROLLVIEW"
+      />
+
       <View style={styles.buttonRow}>
-        <CustomButton text="Post as Request" onPress={postAsRequest} color="darkblue" />
-        <View style={{ width: 10 }} />
-        <CustomButton text="Post as Service" onPress={postAsService} color="darkgreen" />
+        <CustomButton
+          text={item ? "Update" : "Post"}
+          onPress={post}
+          color="maroon"
+        />
+        
       </View>
     </ScrollView>
   );
@@ -185,7 +211,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     marginTop: 30,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   addImageButton: {
     width: 80,

@@ -42,11 +42,12 @@ export default function MainTabs({route}) {
       />
       <Tab.Screen 
         name="Listing" 
-        component={ListingScreen} 
+        children={({ navigation }) => <ListingScreen username={username} navigation={navigation} />}
       />
       <Tab.Screen
         name="Create Listing"
-        children={({ navigation }) => <PostingScreen username={username} navigation={navigation} />}
+        component={PostingScreen}
+        initialParams={{ username: username, item: undefined}}
       />
       <Tab.Screen 
         name="Profile" 
