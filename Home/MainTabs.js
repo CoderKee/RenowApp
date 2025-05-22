@@ -5,7 +5,7 @@ import HomeScreen from './HomeScreen';
 import ListingScreen from './ListingScreen';
 import ProfileScreen from './ProfileScreen';
 import PostingScreen from './PostingScreen';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Using FontAwesome icons
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +14,6 @@ export default function MainTabs({route}) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        // Configure icons for each tab based on route name
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -28,7 +27,6 @@ export default function MainTabs({route}) {
             iconName = 'plus';
           }
 
-          // Return the icon component with proper properties
           return <Icon name={iconName} size={size} color={color} />;
         },
         // Customize active and inactive colors

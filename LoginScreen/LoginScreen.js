@@ -60,6 +60,16 @@ export default function Testing({ navigation }) {
         setPassword("");
         setConfirmPassword("");
       }
+      /*
+            const {data, error} = await supabase.auth.signUp({
+        email: `${username}@renow.com`,
+        password: password
+      })*/
+        /*
+        const {} = await supabase
+        .from('Users')
+        .insert([{ username, password, email: `${username}@renow.com`}])
+        */
     };
 
 
