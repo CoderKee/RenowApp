@@ -1,10 +1,11 @@
-// ProfileStack.js
+
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from './ProfileScreen';
 
 const Stack = createStackNavigator();
 
+//This file might not be necessary -KH
 export default function ProfileStack() {
   return (
     <Stack.Navigator>
@@ -13,7 +14,6 @@ export default function ProfileStack() {
         component={ProfileScreen}
         options={{
           headerTitle: 'Profile',
-          // We'll set headerRight in the ProfileScreen so it can access navigation easily.
         }}
       />
     </Stack.Navigator>
