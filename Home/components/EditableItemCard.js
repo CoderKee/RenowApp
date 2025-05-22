@@ -35,6 +35,10 @@ const ItemCard = ({ item, onDelete }) => {
     
   };
 
+  const viewDetail = () => {
+    navigation.navigate('ItemDetails', { item });
+  }
+
   return (
     <View style={styles.itemContainer}>
       <View style={[styles.header, { backgroundColor: headerColour }]}>
@@ -67,7 +71,11 @@ const ItemCard = ({ item, onDelete }) => {
             </Text>
           </View>
           <View style={styles.button}>
-            <CustomButton text="Accept" color={headerColour} />
+            <CustomButton 
+              text="View" 
+              color={headerColour} 
+              onPress={viewDetail}
+            />
           </View>
         </View>
       </View>

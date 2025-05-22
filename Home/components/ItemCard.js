@@ -1,6 +1,6 @@
 import React from "react";
 import CustomButton from "./CustomButton";
-
+import { useNavigation } from "@react-navigation/native";
 import { 
   View, 
   Text, 
@@ -10,6 +10,11 @@ import {
 
 
 const ItemCard = ({ item }) => {
+  const navigation = useNavigation();
+  const viewDetail = () => {
+    navigation.navigate('ItemDetails', { item });
+  }
+
   const headerColour = item.request ? 'maroon' : '#001B5B';
 
   return (
@@ -52,7 +57,11 @@ const ItemCard = ({ item }) => {
           <View
             style={styles.button}
           >
-          <CustomButton text="Accept" color={headerColour}/>
+          <CustomButton 
+            text="View" 
+            color={headerColour}
+            onPress={viewDetail}
+          />
           </View>
         </View>
       </View>
@@ -79,7 +88,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   imageContainer: {
-    flex: 1,
+    flex: 1, // 1/3 of available width
     justifyContent: 'center',
     alignContent: 'center',
     backgroundColor: '#eee',
