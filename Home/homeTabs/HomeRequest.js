@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ItemCard from './components/ItemCard';
+import ItemCard from '../components/ItemCard';
 import { 
   StyleSheet, 
   Text, 
@@ -8,15 +8,16 @@ import {
   ActivityIndicator, 
   FlatList 
 } from 'react-native';
-import { supabase } from '../server/supabase';
+import { supabase } from '../../server/supabase';
 
 const PAGE_SIZE = 5;
 
-const HomeService = () => {
+const HomeRequest = () => {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [noMoreData, setNoMoreData] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchItems = async (pageNumber) => {
     if (loading || noMoreData) return;
@@ -28,7 +29,9 @@ const HomeService = () => {
     const { data, error } = await supabase
       .from('Listings')
       .select('*')
-      .eq('request', false)
+      .eq('request', true)
+      .eq('accepted', false)
+      .order('created_at', { ascending: false })
       .range(from, to);
 
     if (error) {
@@ -53,6 +56,15 @@ const HomeService = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setNoMoreData(false);
+    setPage(0);
+    setItems([]);
+    await fetchItems(0);
+    setRefreshing(false);
+  };
+
   const renderItem = ({ item }) => <ItemCard item={item} />;
 
   return (
@@ -67,12 +79,14 @@ const HomeService = () => {
             <ActivityIndicator size="large" style={styles.loader} />
           ) : null
         }
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />
     </SafeAreaView>
   );
 }
 
-export default HomeService
+export default HomeRequest
 
 const styles = StyleSheet.create({
     container: {

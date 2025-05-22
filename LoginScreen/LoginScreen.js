@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../server/supabase.js';
+import { useUser } from '../Home/globalContext/UserContext.js';
 import { CommonActions } from '@react-navigation/native';
 
 import {
@@ -13,6 +14,8 @@ import {
 } from "react-native";
 import CustomInput from "./components/CustomInput";
 import CustomButton from './components/CustomButton';
+
+
 export default function Testing({ navigation }) {
     const [error, setError] = useState("");
     const [isLogin, setIsLogin] = useState(true);
@@ -20,6 +23,8 @@ export default function Testing({ navigation }) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loggedInUser, setLoggedInUser] = useState(null);
+
+    const { setUsername } = useUser();
 
     const handleSignUp = async () => {
       setError("")
@@ -98,8 +103,8 @@ export default function Testing({ navigation }) {
       // setLoggedInUser(user.username);
       // setUser("");
       setPassword("");
-
-      navigation.replace('MainTabs', {username});
+      setUsername(username);
+      navigation.replace('RootNavigator', {username});
 
     };
 
