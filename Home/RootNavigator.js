@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainTabs from "./MainTabs";
 import ItemDetails from "./homeTabs/ItemDetails";
+import AcceptedListing from "./listingTabs/AcceptedListing";
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const RootNavigator = ({ route }) => {
                     params={{ username }}
                     options={{ title: 'Details' }}
                 />
+            
             </Stack.Navigator>
         
     )

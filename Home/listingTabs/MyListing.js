@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, use } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import ItemCard from '../components/EditableItemCard';
+import { useUser } from '../globalContext/UserContext';
 import { 
   StyleSheet, 
   Text, 
@@ -8,91 +9,74 @@ import {
   SafeAreaView, 
   ActivityIndicator, 
   FlatList,
-  Button
+  
 } from 'react-native';
 import { supabase } from '../../server/supabase';
 
 const PAGE_SIZE = 5;
 
-const MyListing = ({username, navigation}) => {
+const MyListing = () => {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [noMoreData, setNoMoreData] = useState(false);
   const [noData, setNoData] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleDelete = (listing_id) => {
     setItems((prevItems) => prevItems.filter(item => item.listing_id !== listing_id));
-  } ;
+  };
 
-  const checkdata = async () => {
-    const {data: userData, error: userError} = await supabase
-      .from('Users')
-      .select('user_id')
-      .eq('username', username)
-      .single()
-    const userID = userData.user_id
-    const { data, error } = await supabase
-      .from('Listings')
-      .select('*')
-      .eq('user_id', userID);
-    if (!data || data.length === 0) {
-      setNoData(true)
-    } else {
-      setLoading(false)
-      setNoMoreData(false)
-      setNoData(false)
-      fetchItems(0)
-    }
-  }
+  const { username } = useUser();
 
-  const fetchItems = async (pageNumber) => {
-    if (loading || noMoreData) return;
+  const fetchItems = async (pageNumber, reset = false) => {
+    if (loading || (noMoreData && !reset)) return;
     setLoading(true);
 
     const from = pageNumber * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
-    const {data: userData, error: userError} = await supabase
-      .from('Users')
-      .select('user_id')
-      .eq('username', username)
-      .single()
-
-    const userID = userData.user_id
     const { data, error } = await supabase
       .from('Listings')
-      .select('*')
-      .eq('user_id', userID)
+      .select('*, Users!inner(username)')
+      .eq('Users.username', username)
+      .eq('accepted', false)
       .order('created_at', { ascending: false })
       .range(from, to);
 
     if (error) {
       console.error('Error fetching items:', error);
     } else if (data) {
-      if (data.length < PAGE_SIZE) {
-        setNoMoreData(true);
+      if (reset) {
+        setItems(data);
+      } else {
+        setItems((prevItems) => [...prevItems, ...data]);
       }
-      setItems((prevItems) => [...prevItems, ...data]);
+      setNoData(data.length === 0 && pageNumber === 0);
+      setNoMoreData(data.length < PAGE_SIZE);
       setPage(pageNumber + 1);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    checkdata();
+    fetchItems(0);
   }, []);
+
+  // Manual and auto refresh
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setNoMoreData(false);
+    setPage(0);
+    await fetchItems(0, true);
+    setRefreshing(false);
+  }, [username]);
 
   useFocusEffect(
     useCallback(() => {
-      setItems([]);
-      setPage(0);
-      setLoading(true);
-      setNoMoreData(false);
-      setNoData(false);
-      checkdata();
-    }, [username])
-);
+      handleRefresh();
+    }, [handleRefresh])
+  );
 
   const handleLoadMore = () => {
     if (!loading && !noMoreData) {
@@ -100,13 +84,12 @@ const MyListing = ({username, navigation}) => {
     }
   };
 
+  // this is EditableItemCard
   const renderItem = ({ item }) => (<ItemCard item={item} onDelete={handleDelete} />);
 
   return (
     <SafeAreaView style={styles.container}>
-      {noData && <Text style={styles.text}>
-        "No postings"
-      </Text>}
+      {noData && <Text style={styles.text}>No postings</Text>}
       {!noData && 
       <FlatList
         data={items}
@@ -118,6 +101,8 @@ const MyListing = ({username, navigation}) => {
             <ActivityIndicator size="large" style={styles.loader} />
           ) : null
         }
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />}
     </SafeAreaView>
   );
