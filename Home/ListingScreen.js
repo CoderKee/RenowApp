@@ -13,10 +13,11 @@ import {
 
 const topTab = createMaterialTopTabNavigator();
 
-const ListingScreen = ({username, navigation}) => {
+const ListingScreen = ({username, navigation, route}) => {
+  const initialRouteName = route?.params?.screen || 'My Listing';
   return (
-    <topTab.Navigator>
-      <topTab.Screen name="My Listing" children={({ navigation }) => <MyListing username={username} navigation={navigation} />}/>
+    <topTab.Navigator initialRouteName={initialRouteName}>
+      <topTab.Screen name="My Listing" component={MyListing}/>        
       <topTab.Screen name="Accepted Listing" component={AcceptedListing}/>
       <topTab.Screen name="Completed Listing" component={CompletedRequest}/>
     </topTab.Navigator>

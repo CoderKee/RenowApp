@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import ItemCard from '../components/ItemCard';
 import { 
   StyleSheet, 
@@ -56,14 +57,20 @@ const HomeRequest = () => {
     }
   };
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     setNoMoreData(false);
     setPage(0);
     setItems([]);
     await fetchItems(0);
     setRefreshing(false);
-  };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleRefresh();
+    }, [handleRefresh])
+  );
 
   const renderItem = ({ item }) => <ItemCard item={item} />;
 

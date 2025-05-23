@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ItemCard from '../components/ItemCard';
 import { useUser } from '../globalContext/UserContext';
+import { supabase } from '../../server/supabase';
+import { useFocusEffect } from '@react-navigation/native';
 import { 
   StyleSheet, 
   Text, 
@@ -9,7 +11,7 @@ import {
   ActivityIndicator, 
   FlatList 
 } from 'react-native';
-import { supabase } from '../../server/supabase';
+
 
 const PAGE_SIZE = 5;
 
@@ -58,14 +60,21 @@ const AcceptedListing = () => {
     }
   };
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     setNoMoreData(false);
     setPage(0);
     setItems([]);
     await fetchItems(0);
     setRefreshing(false);
-  };
+  }, [username]);
+
+  // auto refresh
+  useFocusEffect(
+    useCallback(() => {
+      handleRefresh();
+    }, [handleRefresh])
+  );
 
   const renderItem = ({ item }) => <ItemCard item={item} />;
 
@@ -81,6 +90,7 @@ const AcceptedListing = () => {
             <ActivityIndicator size="large" style={styles.loader} />
           ) : null
         }
+        // manual refresh when user pulls down the list
         refreshing={refreshing}
         onRefresh={handleRefresh}
       />
