@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {supabase} from '../../server/supabase'
+import {supabase} from '../../server/supabase';
 import { 
   View, 
   Text, 
@@ -12,6 +12,8 @@ import {
 import CustomButton from "./CustomButton";
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import  AlertModal  from "./AlertModal"; 
+
 
 const ItemCard = ({ item, onDelete }) => {
   const headerColour = item.request ? 'maroon' : '#001B5B';
@@ -80,32 +82,13 @@ const ItemCard = ({ item, onDelete }) => {
         </View>
       </View>
 
-      <Modal
-        transparent={true}
-        animationType="fade"
+      <AlertModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)} 
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Are you sure you want to delete this item?</Text>
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.buttonText}>Cancel</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.modalButton, styles.deleteButton]}
-                onPress={handleDelete}
-              >
-                <Text style={[styles.buttonText, { color: 'white' }]}>Delete</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onCancel={() => setModalVisible(false)}
+        onConfirm={handleDelete}
+        alertText="Are you sure you want to delete this item?"
+        confirmOption="Delete"
+      />
     </View>
   );
 };
