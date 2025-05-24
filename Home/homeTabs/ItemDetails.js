@@ -3,7 +3,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomButton from '../components/CustomButton';
 import { supabase } from '../../server/supabase';
 import { useUser } from '../globalContext/UserContext';
-import { MaterialIcons } from '@expo/vector-icons'; //delete-forever
+import { MaterialIcons } from '@expo/vector-icons'; 
+import  AlertModal  from '../components/AlertModal';
 import { 
     SafeAreaView, 
     ScrollView, 
@@ -14,6 +15,7 @@ import {
     Alert,
     RefreshControl,
     TouchableOpacity, 
+    
 } from 'react-native'
 import { Icon } from '@rneui/themed';
 
@@ -22,6 +24,8 @@ const ItemDetails = ({ route, navigation }) => {
     const { username } = useUser();
     const [posterUsername, setPosterUsername] = useState('');
     const [refreshing, setRefreshing] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [unacceptedModalVisible, setUnacceptedModalVisible] = useState(false);
 
     const fetchPosterUserName = useCallback(async () => {
         if (!item.user_id) return;
@@ -83,85 +87,11 @@ const ItemDetails = ({ route, navigation }) => {
     const dateFormat = {day: 'numeric', month: 'long', year: 'numeric'};
 
     const acceptTask = async () => {
-        Alert.alert(
-            "Confirm Task Acceptance",
-            "Do you want to accept this task?",
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel",
-                    onPress: () => {
-                        console.log("Acceptance Cancelled")
-                    },
-                },
-                {
-                    text: "Accept",
-                    onPress: async () => {
-                        
-                        try {
-                            const {data, error} = await supabase
-                            .from("Listings")
-                            .update({ accepted_by: username, accepted: true })
-                            .eq("listing_id", item.listing_id)
-
-                            if (error) {
-                                Alert.alert("Error", error.message);
-                            } else {
-                                Alert.alert("Success", "Task accepted successfully.",
-                                    [
-                                        {
-                                            text: "OK",
-                                            onPress: () => {
-                                                navigation.navigate("MainTabs", {
-                                                    screen: "Listing",
-                                                    params: { screen: "Accepted Listing" }
-                                                });
-                                            }
-                                        }
-                                    ]
-                                );
-                                // Navigate to accepted Listing and refresh everything                                
-                            }
-
-                        } catch (err) {
-                            console.error(err);
-                            Alert.alert("Error", "An unexpected error has occurred.");
-                        }
-                    },
-                }
-            ]
-        )
+        setModalVisible(true);
     };
 
     const unAcceptTask = () => {
-        Alert.alert(
-            "Confirm Unaccept",
-            "Are you sure you want to unaccept this task?",
-            [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Unaccept",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            const { error } = await supabase
-                                .from("Listings")
-                                .update({ accepted_by: null, accepted: false })
-                                .eq("listing_id", item.listing_id);
-
-                            if (error) {
-                                Alert.alert("Error", error.message);
-                            } else {
-                                Alert.alert("Success", "Task unaccepted successfully.");
-                                navigation.goBack(); // Go back to Accepted Listing screen
-                            }
-                        } catch (err) {
-                            Alert.alert("Error", "An unexpected error has occurred.");
-                        }
-                    }
-                }
-            ]
-        );
+        setUnacceptedModalVisible(true);
     };
 
     function formatDate(timeStamp) {
@@ -209,6 +139,71 @@ const ItemDetails = ({ route, navigation }) => {
             onPress={ item.accepted || posterUsername === username ? null : acceptTask }
         />
       </View>
+      <AlertModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={async () => {
+                        
+                        try {
+                            const {data, error} = await supabase
+                            .from("Listings")
+                            .update({ accepted_by: username, accepted: true })
+                            .eq("listing_id", item.listing_id)
+
+                            if (error) {
+                                Alert.alert("Error", error.message);
+                            } else {
+                                Alert.alert("Success", "Task accepted successfully.",
+                                    [
+                                        {
+                                            text: "OK",
+                                            onPress: () => {
+                                                navigation.navigate("MainTabs", {
+                                                    screen: "Listing",
+                                                    params: { screen: "Accepted Listing" }
+                                                });
+                                            }
+                                        }
+                                    ]
+                                );
+                                                               
+                            }
+
+                        } catch (err) {
+                            console.error(err);
+                            Alert.alert("Error", "An unexpected error has occurred.");
+                        } finally {
+                            setModalVisible(false);
+                        }
+                    }}
+            alertText="Are you sure you want to accept this task?"
+            confirmOption="Accept"
+          />
+        <AlertModal
+        visible={unacceptedModalVisible}
+        onCancel={() => setUnacceptedModalVisible(false)}
+        onConfirm={async () => {
+                        try {
+                            const { error } = await supabase
+                                .from("Listings")
+                                .update({ accepted_by: null, accepted: false })
+                                .eq("listing_id", item.listing_id);
+
+                            if (error) {
+                                Alert.alert("Error", error.message);
+                            } else {
+                                Alert.alert("Success", "Task unaccepted successfully.");
+                                navigation.goBack(); // Go back to Accepted Listing screen
+                            }
+                        } catch (err) {
+                            Alert.alert("Error", "An unexpected error has occurred.");
+                        } finally {
+                            setUnacceptedModalVisible(false);
+                        }
+                    }}
+        alertText="Are you sure you want to un-accept this task?"
+        confirmOption="Undo Accept"
+      />
     </View>
   )
 }

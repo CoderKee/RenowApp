@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import AcceptedListing from './listingTabs/AcceptedListing';
-import CompletedRequest from './listingTabs/CompletedRequest';
+import ClaimedListing from './listingTabs/ClaimedListing';
 import MyListing from './listingTabs/MyListing';
 import { 
   StyleSheet, 
@@ -11,6 +11,7 @@ import {
   FlatList 
 } from 'react-native';
 
+
 const topTab = createMaterialTopTabNavigator();
 
 const ListingScreen = ({username, navigation, route}) => {
@@ -19,7 +20,7 @@ const ListingScreen = ({username, navigation, route}) => {
     <topTab.Navigator initialRouteName={initialRouteName}>
       <topTab.Screen name="My Listing" component={MyListing}/>        
       <topTab.Screen name="Accepted Listing" component={AcceptedListing}/>
-      <topTab.Screen name="Completed Listing" component={CompletedRequest}/>
+      <topTab.Screen name="Claimed Listing" component={ClaimedListing}/>
     </topTab.Navigator>
   );
 };
