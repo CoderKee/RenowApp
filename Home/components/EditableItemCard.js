@@ -13,6 +13,7 @@ import CustomButton from "./CustomButton";
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import  AlertModal  from "./AlertModal"; 
+import EditScreen from "./EditScreen";
 
 
 const ItemCard = ({ item, onDelete }) => {
@@ -47,7 +48,7 @@ const ItemCard = ({ item, onDelete }) => {
         <View style={[{flexDirection:'row', justifyContent: 'space-between', alignItems: 'center' }]}>
           <Text style={styles.headerText}>{item.type.toUpperCase()}</Text>
           <View style={[{flexDirection:'row'}]}>
-            <TouchableOpacity onPress={() => navigation.navigate("Create Listing", {item: item})}>
+            <TouchableOpacity onPress={() => navigation.navigate("EditScreen", {item: item})}>
               <MaterialIcons name="edit" size={20} color="white" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
