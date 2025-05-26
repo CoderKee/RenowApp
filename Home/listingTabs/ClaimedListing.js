@@ -20,6 +20,7 @@ const ClaimedListing = () => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [noMoreData, setNoMoreData] = useState(false);
+  const [noData, setNoData] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const { username } = useUser();
@@ -45,7 +46,12 @@ const ClaimedListing = () => {
       if (data.length < PAGE_SIZE) {
         setNoMoreData(true);
       }
-      setItems((prevItems) => [...prevItems, ...data]);
+      if (pageNumber === 0) {
+        setItems(data); 
+      } else {
+        setItems((prevItems) => [...prevItems, ...data]); 
+      }
+      setNoData(data.length === 0 && pageNumber === 0);
       setPage(pageNumber + 1);
     }
     setLoading(false);
@@ -81,20 +87,23 @@ const ClaimedListing = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loading ? (
-            <ActivityIndicator size="large" style={styles.loader} />
-          ) : null
-        }
-        // manual refresh when user pulls down the list
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-      />
+      {noData && <Text style={styles.text}>No claimed listings</Text>}
+      {!noData && 
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            loading ? (
+              <ActivityIndicator size="large" style={styles.loader} />
+            ) : null
+          }
+          // manual refresh when user pulls down the list
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
+      } 
     </SafeAreaView>
  
   );
@@ -127,4 +136,9 @@ const styles = StyleSheet.create({
     loader: {
         marginVertical: 20,
     },
+    text: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    alignSelf: 'center'
+  }
 })

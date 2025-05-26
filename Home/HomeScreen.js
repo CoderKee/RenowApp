@@ -16,7 +16,7 @@ const HomeScreen = () => {
             // Attempt to force a row layout for the tab items
             tabBarItemStyle: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
             tabBarLabelStyle: { marginLeft: 8 },
-            tabBarActiveTintColor: '#0C2B72',
+            tabBarActiveTintColor: 'black',
             tabBarInactiveTintColor: 'gray',
           }}
         >

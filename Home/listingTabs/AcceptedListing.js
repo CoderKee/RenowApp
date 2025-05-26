@@ -20,23 +20,24 @@ const AcceptedListing = () => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [noMoreData, setNoMoreData] = useState(false);
+  const [noData, setNoData] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const { username } = useUser();
 
   const fetchItems = async (pageNumber) => {
-    if (loading || noMoreData) return;
-    setLoading(true);
+  if (loading || noMoreData) return;
+  setLoading(true);
 
-    const from = pageNumber * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
+  const from = pageNumber * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
-    const { data, error } = await supabase
-      .from('Listings')
-      .select('*')
-      .eq('accepted_by', username)
-      .order('created_at', { ascending: false })
-      .range(from, to);
+  const { data, error } = await supabase
+    .from('Listings')
+    .select('*')
+    .eq('accepted_by', username)
+    .order('created_at', { ascending: false })
+    .range(from, to);
 
     if (error) {
       console.error('Error fetching items:', error);
@@ -44,7 +45,12 @@ const AcceptedListing = () => {
       if (data.length < PAGE_SIZE) {
         setNoMoreData(true);
       }
-      setItems((prevItems) => [...prevItems, ...data]);
+      if (pageNumber === 0) {
+        setItems(data); 
+      } else {
+        setItems((prevItems) => [...prevItems, ...data]); 
+      }
+      setNoData(data.length === 0 && pageNumber === 0);
       setPage(pageNumber + 1);
     }
     setLoading(false);
@@ -80,20 +86,23 @@ const AcceptedListing = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loading ? (
-            <ActivityIndicator size="large" style={styles.loader} />
-          ) : null
-        }
-        // manual refresh when user pulls down the list
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-      />
+      {noData && <Text style={styles.text}>No accepted listings</Text>}
+      {!noData && 
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            loading ? (
+              <ActivityIndicator size="large" style={styles.loader} />
+            ) : null
+          }
+          // manual refresh when user pulls down the list
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
+      }
     </SafeAreaView>
   );
 }
@@ -125,4 +134,9 @@ const styles = StyleSheet.create({
   loader: {
     marginVertical: 20,
   },
+  text: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    alignSelf: 'center'
+  }
 })

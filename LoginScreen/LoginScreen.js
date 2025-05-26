@@ -32,6 +32,17 @@ export default function Testing({ navigation }) {
         setError("Please fill all fields.");
         return;
       }
+
+      if (username.length < 4) {
+        setError("Username should be at least 4 characters")
+        return;
+      }
+
+      if (password.length < 8) {
+        setError("Password should be at least 8 characters")
+        return;
+      }
+      
       if (password !== confirmPassword) {
         setError("Passwords don't match.");
         return;
