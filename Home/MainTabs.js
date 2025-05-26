@@ -46,7 +46,7 @@ export default function MainTabs({route}) {
       <Tab.Screen
         name="Create Listing"
         component={PostingScreen}
-        initialParams={{ username: username, item: undefined}}
+        initialParams={{item: undefined}}
       />
       <Tab.Screen 
         name="Profile" 

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import CustomDescriptionInput from './components/CustomDescriptionInput';
 import CustomTitleInput from './components/CustomTitleInput';
 import CustomPriceInput from './components/CustomPriceInput';
 import CustomButton from './components/CustomButton';
 import { supabase } from '../server/supabase.js';
+import { useUser } from './globalContext/UserContext.js';
 
 const PostingScreen = ({ route, navigation }) => {
-  const { username, item } = route?.params || {};
+  const {username} = useUser();
+  const {item} = route?.params || {};
   const [error, setError] = useState('');
   const [images, setImages] = useState([]);
   const [title, setTitle] = useState('');
@@ -107,7 +109,9 @@ const PostingScreen = ({ route, navigation }) => {
       setPrice('');
       setServiceType('Cleaning');
       navigation.setParams({ item: undefined });
-      navigation.navigate('Listing');
+      navigation.navigate('Listing',
+        {screen: 'My Listing'}
+      );
     }
   };
 

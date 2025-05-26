@@ -49,7 +49,7 @@ const ItemDetails = ({ route, navigation }) => {
                         style={{ marginRight: 15 }}
                         onPress={unAcceptTask}
                     >
-                        <Icon name="delete-forever" size={50} color='maroon'/>
+                        <Icon name="cancel" size={30} color='maroon'/> 
                     </TouchableOpacity>
 
                 )
