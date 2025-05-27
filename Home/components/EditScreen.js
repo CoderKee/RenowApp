@@ -4,8 +4,13 @@ import CustomDescriptionInput from './CustomDescriptionInput';
 import CustomTitleInput from './CustomTitleInput';
 import CustomPriceInput from './CustomPriceInput';
 import CustomButton from './CustomButton';
+import LoadingScreen from './LoadingScreen.js';
 import { useUser } from '../globalContext/UserContext.js';
 import { supabase } from '../../server/supabase.js';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
+
 import { 
   View, 
   Text, 
@@ -20,11 +25,13 @@ const EditScreen = ({ route, navigation }) => {
   
   const { item } = route?.params || {};
   const [error, setError] = useState('');
-  const [images, setImages] = useState([]);
+  const [imageError, setImageError] = useState('')
+  const [images, setImages] = useState(item?.images || []);
   const [title, setTitle] = useState(item?.title || '');
   const [description, setDescription] = useState(item?.description || '');
   const [price, setPrice] = useState(item?.price?.toString() || '');
   const [postType, setPostType] = useState('Request');
+  const [loading, setLoading] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [serviceType, setServiceType] = useState(item.type || 'Cleaning');
@@ -42,42 +49,167 @@ const EditScreen = ({ route, navigation }) => {
   ]);
 
   const { username } = useUser();
-
+////////////////////////////////////FUNCTION DEMARCATION///////////////////////////////////////////
   // change this once image functionality is implemented
-  const renderImage = ({ item }) => (
-    <Image source={{ uri: item }} style={styles.imageThumbnail} />
-  );
+  const addImage = async () => {
+      if (images.length >= 3) {
+        setImageError("You can only upload up to 3 images.");
+        return;
+      }
+  
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        setImageError("Permission to access media library is required!");
+        return;
+      }
+  
+      let uploads = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'Images',
+        allowsEditing: true,
+        quality: 1,
+        aspect: [1, 1], 
+        base64: true
+      });
+  
+      if (!uploads.canceled) {
+        const uri = uploads.assets[0].uri;
+        setImages([...images, uri]);
+        setImageError("");
+      }
+    };
+  
+  const renderImage = ({ item, index }) => {
 
-  const addImage = () => {
+    const isLocal = item.startsWith('file://') || item.startsWith('data:');
+    let imageSource;
+    if (isLocal) {
+      imageSource = { uri: item };
+    } else {
+      const { data, error: imageError } = supabase.storage.from('images').getPublicUrl(item);
+      if (data?.publicUrl) {
+        imageSource = { uri: data.publicUrl };
+      } else {
+        //console.log("Error fetching publicUrl for:", item, imageError);
+        setImageError("Error fetching publicUrl for:", item, imageError);
+      }
+    }
+    //console.log([item])
+    const handleDeleteImage = async () => {
+      //console.log(1)
+      if (!isLocal) {
+        //console.log(2)
+        const { error } = await supabase.storage.from('images').remove([item]);
+        if (error) {
+          //console.log("Error deleting image from Supabase:", error);
+          setImageError("Error deleting image from Supabase:", error);
+        }
+      }
 
+      setImages(images.filter((_, i) => i !== index));
+    };
+
+    return (
+      <View style={{ position: 'relative', marginRight: 10 }}>
+        <Image source={imageSource} style={styles.imageThumbnail} />
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            right: -5,
+            width: 20, 
+            height: 20,
+            backgroundColor: 'white',
+            borderRadius: 10, 
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={handleDeleteImage}
+        >
+          <Text style={{ color: 'red', fontSize: 13, fontWeight: 'bold' }}>×</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
-  const updateListing = async () => {
-    setError("");
-    if (!title || !description || !price) {
-      setError("Please fill in all text fields.");
-      return;
-    }
-    const { data, error } = await supabase
-      .from('Listings')
-      .update({
-        title: title,
-        description: description,
-        price: price,
-        type: serviceType,
-        request: postType === 'Request',
-      })
-      .eq('listing_id', item.listing_id);
 
-    if (error) {
-      console.error('Error updating listing:', error);
-      setError("Error updating listing.");
-    } else {
-      console.log('Listing updated successfully:', data);
-      navigation.goBack();
+  const uploadImage = async (uri, index) => {
+    try {
+      const base64Image = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const buffer = decode(base64Image);
+
+      const extension = uri.split('.').pop();
+      const fileName = `image_${Date.now()}_${index}.${extension || 'jpg'}`;
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, buffer, {
+          contentType: 'image/jpeg', 
+          upsert: true,
+        });
+
+      if (error) {
+        //console.log("Error uploading:", error);
+        return null;
+      }
+
+      //console.log("Uploaded file path:", data.path);
+      return data.path;
+    } catch (err) {
+      //console.log("Error uploading:", err);
+      return null;
     }
-    
+  };
+
+const updateListing = async () => {
+  setError("");
+  if (!title || !description || !price) {
+    setError("Please fill in all text fields.");
+    return;
   }
+  setLoading(true);
+  const uploadedImagePaths = [];
+  for (let i = 0; i < images.length; i++) {
+    const img = images[i];
+    if (img.startsWith('file://')) {
+      const uploadedPath = await uploadImage(img, i);
+      if (uploadedPath) {
+        uploadedImagePaths.push(uploadedPath);
+      } else {
+        setLoading(false);
+        setError("Failed to upload some images.");
+        return;
+      }
+    } else {
+      uploadedImagePaths.push(img);
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('Listings')
+    .update({
+      title: title,
+      description: description,
+      price: price,
+      type: serviceType,
+      request: postType === 'Request',
+      images: uploadedImagePaths, 
+    })
+    .eq('listing_id', item.listing_id);
+
+  if (error) {
+    //console.error('Error updating listing:', error);
+    setLoading(false);
+    setError("Error updating listing.");
+  } else {
+    //console.log('Listing updated successfully:', data);
+    setLoading(false);
+    navigation.goBack();
+  }
+};
+
+////////////////////////////////////FUNCTION DEMARCATION///////////////////////////////////////////
 
   return (
     
@@ -95,6 +227,10 @@ const EditScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         }
       />
+      
+      {imageError !== "" && (
+        <Text style={{ color: 'red'}}>{imageError}</Text>
+      )}
 
       <Text style={styles.label}>Title</Text>
       <CustomTitleInput placeholder="Enter Title" value={title} setValue={setTitle} />
@@ -134,7 +270,7 @@ const EditScreen = ({ route, navigation }) => {
         dropDownContainerStyle={styles.dropdownContainer}
         listMode="SCROLLVIEW"
       />
-
+      <LoadingScreen visible={loading} text={'Updating...'}/>
       <View style={styles.buttonRow}>
         <CustomButton
           text="Update"

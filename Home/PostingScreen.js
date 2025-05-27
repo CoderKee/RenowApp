@@ -5,6 +5,7 @@ import CustomDescriptionInput from './components/CustomDescriptionInput';
 import CustomTitleInput from './components/CustomTitleInput';
 import CustomPriceInput from './components/CustomPriceInput';
 import CustomButton from './components/CustomButton';
+import LoadingScreen from './components/LoadingScreen.js';
 import { supabase } from '../server/supabase.js';
 import { useUser } from './globalContext/UserContext.js';
 import * as ImagePicker from 'expo-image-picker';
@@ -21,6 +22,7 @@ const PostingScreen = ({ route, navigation }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [loading, setLoading] = useState(false);
 
 
   const [open, setOpen] = useState(false);
@@ -160,12 +162,13 @@ const PostingScreen = ({ route, navigation }) => {
       return;
     }
 
+    setLoading(true);
+
     const uploads = [];
 
     for (let i = 0; i < images.length; i++) { //for image upload
       //console.log(1)
       const path = await uploadImage(images[i], i);
-      //console.log(path)
       if (path) uploads.push(path);
     }
     //console.log(uploads)
@@ -194,8 +197,10 @@ const PostingScreen = ({ route, navigation }) => {
     }
 
     if (result.error) {
+      setLoading(false);
       setError("Error saving listing.");
     } else {
+      setLoading(false);
       setError("");
       setTitle('');
       setDescription('');
@@ -279,7 +284,7 @@ const PostingScreen = ({ route, navigation }) => {
         dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1 }]}
         listMode="SCROLLVIEW"
       />
-
+      <LoadingScreen visible={loading} text={"Posting..."}/>
       <View style={styles.buttonRow}>
         <CustomButton
           text={item ? "Update" : "Post"}
