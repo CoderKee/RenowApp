@@ -5,6 +5,7 @@ import { supabase } from '../../server/supabase';
 import { useUser } from '../globalContext/UserContext';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import  AlertModal  from '../components/AlertModal';
+import { Icon } from '@rneui/themed';
 import { 
     SafeAreaView, 
     ScrollView, 
@@ -17,7 +18,6 @@ import {
     TouchableOpacity, 
     
 } from 'react-native'
-import { Icon } from '@rneui/themed';
 
 const ItemDetails = ({ route, navigation }) => {
     const { item } = route.params;
