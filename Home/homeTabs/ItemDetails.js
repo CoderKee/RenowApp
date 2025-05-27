@@ -99,113 +99,124 @@ const ItemDetails = ({ route, navigation }) => {
         return date.toLocaleDateString('en-GB', dateFormat);
     }
 
-  return (
-    <View style={styles.container}>
-      <ScrollView 
-      contentContainerStyle={styles.contentContainer}
-      styles={styles.scrollArea}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-        />
-      }
-      >
-        <View
-        style={styles.imageContainer}
+    const { data, error } = supabase
+      .storage
+      .from('images')
+      .getPublicUrl(item.images[0]);
+
+    return (
+        <View style={styles.container}>
+        <ScrollView 
+        contentContainerStyle={styles.contentContainer}
+        styles={styles.scrollArea}
+        refreshControl={
+            <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            />
+        }
         >
-            <Image
-            // remember to change the pathing
-            source={ require('../../assets/image.png') }
-            style={styles.image}
+            <View
+            style={styles.imageContainer}
+            >
+                {item.images.length > 0 ? (
+                    <Image
+                    source={{ uri: data.publicUrl }} // Display the first image
+                    style={styles.image}
+                    />
+                ) : (
+                    <Image
+                    source={require('../../assets/image.png')} // Default image if no image uploaded
+                    style={styles.image}
+                    />
+                )}
+            </View>
+            <View
+            style={styles.descriptionContainer}
+            >
+                <Text style={styles.title}>{item.title.toUpperCase()}</Text>
+                <Text style={styles.price}>${item.price}</Text>
+                <Text>Listed By {posterUsername}</Text>
+                <Text>On {formatDate(item.created_at)}</Text>
+                <Text style={styles.description}>Description</Text>
+                <Text>{item.description}</Text>
+            </View>
+        </ScrollView>
+        <View style={styles.accept}>
+            <CustomButton 
+                text={ posterUsername === username ? "Cannot Accept Your Own Listing"
+                                                : item.accepted ? "Accepted" : "Accept" }
+                color={ styleColour }
+                onPress={ item.accepted || posterUsername === username ? null : acceptTask }
             />
         </View>
-        <View
-        style={styles.descriptionContainer}
-        >
-            <Text style={styles.title}>{item.title.toUpperCase()}</Text>
-            <Text style={styles.price}>${item.price}</Text>
-            <Text>Listed By {posterUsername}</Text>
-            <Text>On {formatDate(item.created_at)}</Text>
-            <Text style={styles.description}>Description</Text>
-            <Text>{item.description}</Text>
-        </View>
-      </ScrollView>
-      <View style={styles.accept}>
-        <CustomButton 
-            text={ posterUsername === username ? "Cannot Accept Your Own Listing"
-                                               : item.accepted ? "Accepted" : "Accept" }
-            color={ styleColour }
-            onPress={ item.accepted || posterUsername === username ? null : acceptTask }
-        />
-      </View>
-      <AlertModal
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={async () => {
-                        
-                        try {
-                            const {data, error} = await supabase
-                            .from("Listings")
-                            .update({ accepted_by: username, accepted: true })
-                            .eq("listing_id", item.listing_id)
-
-                            if (error) {
-                                Alert.alert("Error", error.message);
-                            } else {
-                                Alert.alert("Success", "Task accepted successfully.",
-                                    [
-                                        {
-                                            text: "OK",
-                                            onPress: () => {
-                                                navigation.navigate("MainTabs", {
-                                                    screen: "Listing",
-                                                    params: { screen: "Accepted Listing" }
-                                                });
-                                            }
-                                        }
-                                    ]
-                                );
-                                                               
-                            }
-
-                        } catch (err) {
-                            console.error(err);
-                            Alert.alert("Error", "An unexpected error has occurred.");
-                        } finally {
-                            setModalVisible(false);
-                        }
-                    }}
-            alertText="Are you sure you want to accept this task?"
-            confirmOption="Accept"
-          />
         <AlertModal
-        visible={unacceptedModalVisible}
-        onCancel={() => setUnacceptedModalVisible(false)}
-        onConfirm={async () => {
-                        try {
-                            const { error } = await supabase
+                visible={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                onConfirm={async () => {
+                            
+                            try {
+                                const {data, error} = await supabase
                                 .from("Listings")
-                                .update({ accepted_by: null, accepted: false })
-                                .eq("listing_id", item.listing_id);
+                                .update({ accepted_by: username, accepted: true })
+                                .eq("listing_id", item.listing_id)
 
-                            if (error) {
-                                Alert.alert("Error", error.message);
-                            } else {
-                                Alert.alert("Success", "Task unaccepted successfully.");
-                                navigation.goBack(); // Go back to Accepted Listing screen
+                                if (error) {
+                                    Alert.alert("Error", error.message);
+                                } else {
+                                    Alert.alert("Success", "Task accepted successfully.",
+                                        [
+                                            {
+                                                text: "OK",
+                                                onPress: () => {
+                                                    navigation.navigate("MainTabs", {
+                                                        screen: "Listing",
+                                                        params: { screen: "Accepted Listing" }
+                                                    });
+                                                }
+                                            }
+                                        ]
+                                    );
+                                                                
+                                }
+
+                            } catch (err) {
+                                console.error(err);
+                                Alert.alert("Error", "An unexpected error has occurred.");
+                            } finally {
+                                setModalVisible(false);
                             }
-                        } catch (err) {
-                            Alert.alert("Error", "An unexpected error has occurred.");
-                        } finally {
-                            setUnacceptedModalVisible(false);
-                        }
-                    }}
-        alertText="Are you sure you want to un-accept this task?"
-        confirmOption="Undo Accept"
-      />
-    </View>
-  )
+                        }}
+                alertText="Are you sure you want to accept this task?"
+                confirmOption="Accept"
+            />
+            <AlertModal
+            visible={unacceptedModalVisible}
+            onCancel={() => setUnacceptedModalVisible(false)}
+            onConfirm={async () => {
+                            try {
+                                const { error } = await supabase
+                                    .from("Listings")
+                                    .update({ accepted_by: null, accepted: false })
+                                    .eq("listing_id", item.listing_id);
+
+                                if (error) {
+                                    Alert.alert("Error", error.message);
+                                } else {
+                                    Alert.alert("Success", "Task unaccepted successfully.");
+                                    navigation.goBack(); // Go back to Accepted Listing screen
+                                }
+                            } catch (err) {
+                                Alert.alert("Error", "An unexpected error has occurred.");
+                            } finally {
+                                setUnacceptedModalVisible(false);
+                            }
+                        }}
+            alertText="Are you sure you want to un-accept this task?"
+            confirmOption="Undo Accept"
+        />
+        </View>
+    )
 }
 
 export default ItemDetails
@@ -234,6 +245,7 @@ const styles = StyleSheet.create({
     },
 
     image: {
+        flex: 1,
         resizeMode: "contain",
         width: '100%',
         height: 200,
