@@ -7,8 +7,8 @@ const LoadingScreen = ({ visible, text }) => {
       animationType="fade"
       visible={visible}
     >
-      <View style={styles.modalBackground}>
-        <View style={styles.activityIndicatorWrapper}>
+      <View style={styles.container}>
+        <View style={styles.wrapper}>
           <ActivityIndicator size="large" color="#ffffff" />
           {text && <Text style={styles.loadingText}>{text}</Text>}
         </View>
@@ -17,16 +17,16 @@ const LoadingScreen = ({ visible, text }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  modalBackground: {
+const styles = StyleSheet.create({  
+  container: { //This is for the entire loading screen background
     flex: 1,
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#00000040', 
+    backgroundColor: '#00000000', // 00 at the end represents opacity, users should not be able to click any other buttons during loading screen
   },
-  activityIndicatorWrapper: {
-    backgroundColor: '#00000080',
+  wrapper: { //for the box where the activity indicator lies on
+    backgroundColor: '#00000080', 
     height: 100,
     width: 100,
     borderRadius: 10,
