@@ -34,6 +34,7 @@ const EditScreen = ({ route, navigation }) => {
   const [postType, setPostType] = useState('Request');
   const [loading, setLoading] = useState(false);
   const [markedDates, setMarkedDates] = useState(item?.available_dates || []);
+  const [deleted, setDeleted] = useState([]);
 
   const [open, setOpen] = useState(false);
   const [serviceType, setServiceType] = useState(item.type || 'Cleaning');
@@ -91,23 +92,14 @@ const EditScreen = ({ route, navigation }) => {
       if (data?.publicUrl) {
         imageSource = { uri: data.publicUrl };
       } else {
-        //console.log("Error fetching publicUrl for:", item, imageError);
         setImageError("Error fetching publicUrl for:", item, imageError);
       }
     }
-    //console.log([item])
-    const handleDeleteImage = async () => {
-      //console.log(1)
-      if (!isLocal) {
-        //console.log(2)
-        const { error } = await supabase.storage.from('images').remove([item]);
-        if (error) {
-          //console.log("Error deleting image from Supabase:", error);
-          setImageError("Error deleting image from Supabase:", error);
-        }
-      }
 
+    const handleDeleteImage = async () => {
       setImages(images.filter((_, i) => i !== index));
+      setDeleted([...deleted, images[index]]);
+      console.log(deleted)
     };
 
     return (
@@ -172,9 +164,17 @@ const updateListing = async () => {
   }
   setLoading(true);
   const uploadedImagePaths = [];
+  for (let i = 0; i < deleted.length; i++) {
+    const isLocal = deleted[i].startsWith('file://') || deleted[i].startsWith('data:')
+    if (!isLocal) {
+        const { error } = await supabase.storage.from('images').remove([deleted[i]]);
+        if (error) {         
+        }
+      }
+  }
   for (let i = 0; i < images.length; i++) {
     const img = images[i];
-    if (img.startsWith('file://')) {
+    if (img.startsWith('file://') || img.startsWith('data:')) {
       const uploadedPath = await uploadImage(img, i);
       if (uploadedPath) {
         uploadedImagePaths.push(uploadedPath);
