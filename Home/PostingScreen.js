@@ -11,6 +11,7 @@ import { useUser } from './globalContext/UserContext.js';
 import * as ImagePicker from 'expo-image-picker';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
+import DateSelector from './components/DateSelector.js';
 
 
 const PostingScreen = ({ route, navigation }) => {
@@ -42,6 +43,21 @@ const PostingScreen = ({ route, navigation }) => {
     { label: 'Service', value: 'Service' },
   ]);
 
+  // for the scheduling portion (here we initialize the date modals)
+  const [availableDates, setAvailableDates] = useState([]); 
+
+  const handleAddDates = (dates) => {
+    const sortedDates = dates.sort((a, b) => new Date(a) - new Date(b));
+    setAvailableDates(sortedDates); // Update the available dates(in sorted order)
+    setShowDateModal(false);
+  };
+
+  const removeDate = (date) => {
+    setAvailableDates(availableDates.filter(d => d !== date));
+  }
+
+
+  // redundant?
   useEffect(() => {
     if (item) {
       setTitle(item.title || '');
@@ -146,8 +162,8 @@ const PostingScreen = ({ route, navigation }) => {
 
   const post = async () => {
     setError("");
-    if (!title || !description || !price) {
-      setError("Please fill in all text fields.");
+    if (!title || !description || !price || availableDates.length === 0) {
+      setError("Please fill in all fields.");
       return;
     }
 
@@ -182,6 +198,7 @@ const PostingScreen = ({ route, navigation }) => {
       request: postType === 'Request' ? true : false,
       created_at: new Date().toISOString(),
       images: uploads,
+      available_dates: availableDates
     };
 
     let result;
@@ -207,6 +224,7 @@ const PostingScreen = ({ route, navigation }) => {
       setPrice('');
       setServiceType('Cleaning');
       setImages([]);
+      setAvailableDates([]);
       navigation.setParams({ item: undefined });
       navigation.navigate('Listing',
         {screen: 'My Listing'}
@@ -217,7 +235,10 @@ const PostingScreen = ({ route, navigation }) => {
   ///////////////////////////Functions demarcation////////////////////////////////////
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView 
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"  
+    >
       
       <Text style={styles.label}>
         Upload Images <Text style={{ fontWeight: 'normal', color: '#666' }}>({images.length}/3)</Text>
@@ -244,6 +265,11 @@ const PostingScreen = ({ route, navigation }) => {
 
       <Text style={styles.label}>Description</Text>
       <CustomDescriptionInput placeholder="Enter description" value={description} setValue={setDescription} />
+
+      <DateSelector
+        value={availableDates}
+        onChange={setAvailableDates}
+      />
       
       <Text style={styles.label}>Type of Service</Text>
       <DropDownPicker
@@ -290,6 +316,7 @@ const PostingScreen = ({ route, navigation }) => {
           text={item ? "Update" : "Post"}
           onPress={post}
           color="maroon"
+          
         />
         
       </View>

@@ -10,6 +10,7 @@ import { supabase } from '../../server/supabase.js';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
+import DateSelector from './DateSelector.js';
 
 import { 
   View, 
@@ -32,6 +33,7 @@ const EditScreen = ({ route, navigation }) => {
   const [price, setPrice] = useState(item?.price?.toString() || '');
   const [postType, setPostType] = useState('Request');
   const [loading, setLoading] = useState(false);
+  const [markedDates, setMarkedDates] = useState(item?.available_dates || []);
 
   const [open, setOpen] = useState(false);
   const [serviceType, setServiceType] = useState(item.type || 'Cleaning');
@@ -164,7 +166,7 @@ const EditScreen = ({ route, navigation }) => {
 
 const updateListing = async () => {
   setError("");
-  if (!title || !description || !price) {
+  if (!title || !description || !price || markedDates.length === 0) {
     setError("Please fill in all text fields.");
     return;
   }
@@ -195,6 +197,7 @@ const updateListing = async () => {
       type: serviceType,
       request: postType === 'Request',
       images: uploadedImagePaths, 
+      available_dates: markedDates,
     })
     .eq('listing_id', item.listing_id);
 
@@ -237,6 +240,11 @@ const updateListing = async () => {
 
       <Text style={styles.label}>Description</Text>
       <CustomDescriptionInput placeholder="Enter description" value={description} setValue={setDescription} />
+
+      <DateSelector
+        value={markedDates}
+        onChange={setMarkedDates}
+      />
       
       <Text style={styles.label}>Type of Service</Text>
       <DropDownPicker

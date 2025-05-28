@@ -4,9 +4,9 @@ import CustomButton from '../components/CustomButton';
 import { supabase } from '../../server/supabase';
 import { useUser } from '../globalContext/UserContext';
 import AlertModal from '../components/AlertModal';
-import { MaterialIcons } from '@expo/vector-icons'; 
-import  AlertModal  from '../components/AlertModal';
 import { Icon } from '@rneui/themed';
+import Calendar from '../components/Calendar';
+import dayjs from 'dayjs';
 import { 
     ScrollView, 
     StyleSheet, 
@@ -26,6 +26,7 @@ const ItemDetails = ({ route, navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [unacceptedModalVisible, setUnacceptedModalVisible] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const fetchPosterUserName = useCallback(async () => {
         if (!item.user_id) return;
@@ -58,6 +59,8 @@ const ItemDetails = ({ route, navigation }) => {
         }
     }, [navigation, item.accepted, item.accepted_by, username]);  
 
+    const availableDates = item.available_dates || [];
+
     const handleRefresh = useCallback(async () => {
         setRefreshing(true);
         await fetchPosterUserName();
@@ -75,10 +78,10 @@ const ItemDetails = ({ route, navigation }) => {
     }, [fetchPosterUserName]);
 
     const styleColour = item.request 
-                        ? item.accepted || posterUsername === username
+                        ? item.accepted || posterUsername === username || selectedDate === null
                             ? '#997570'
                             : 'maroon'
-                        : item.accepted || posterUsername === username
+                        : item.accepted || posterUsername === username || selectedDate === null 
                             ? '#7393B3'
                             : '#001B5B';
 
@@ -172,13 +175,29 @@ const ItemDetails = ({ route, navigation }) => {
                     <Text style={styles.description}>Description</Text>
                     <Text>{item.description}</Text>
                 </View>
+                <View style={{ marginVertical: 20 }}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 8, justifyContent: 'center' }}>Available Dates</Text>
+                    <Calendar
+                        availableDates={availableDates}
+                        selectedDate={selectedDate}
+                        onSelectDate={setSelectedDate}
+                    />
+                    {selectedDate && (
+                        <Text style={{ marginTop: 10, color: '#4A90E2' }}>
+                            Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
+                        </Text>
+                    )}
+                </View>
             </ScrollView>
+            
             <View style={styles.accept}>
                 <CustomButton 
                     text={ posterUsername === username ? "Cannot Accept Your Own Listing"
-                                                    : item.accepted ? "Accepted" : "Accept" }
+                                                    : item.accepted ? "Accepted" 
+                                                        : selectedDate === null ?  "Please Select Date" : "Accept"
+                        }
                     color={ styleColour }
-                    onPress={ item.accepted || posterUsername === username ? null : acceptTask }
+                    onPress={ item.accepted || selectedDate === null || posterUsername === username ? null : acceptTask }
                 />
             </View>
             <AlertModal
@@ -188,7 +207,7 @@ const ItemDetails = ({ route, navigation }) => {
                     try {
                         const {data, error} = await supabase
                             .from("Listings")
-                            .update({ accepted_by: username, accepted: true })
+                            .update({ accepted_by: username, accepted: true, selected_date: selectedDate })
                             .eq("listing_id", item.listing_id)
 
                         if (error) {
@@ -215,8 +234,9 @@ const ItemDetails = ({ route, navigation }) => {
                         setModalVisible(false);
                     }
                 }}
-                alertText="Are you sure you want to accept this task?"
+                alertText="Are you sure you want to accept this task on the following day?"
                 confirmOption="Accept"
+                selectedDate={selectedDate}
             />
             <AlertModal
                 visible={unacceptedModalVisible}
@@ -225,7 +245,7 @@ const ItemDetails = ({ route, navigation }) => {
                     try {
                         const { error } = await supabase
                             .from("Listings")
-                            .update({ accepted_by: null, accepted: false })
+                            .update({ accepted_by: null, accepted: false, selected_date: null })
                             .eq("listing_id", item.listing_id);
 
                         if (error) {
@@ -240,8 +260,9 @@ const ItemDetails = ({ route, navigation }) => {
                         setUnacceptedModalVisible(false);
                     }
                 }}
-                alertText="Are you sure you want to un-accept this task?"
+                alertText="Are you sure you want to un-accept this task on the following day?"
                 confirmOption="Undo Accept"
+                selectedDate={selectedDate}
             />
         </View>
     )
