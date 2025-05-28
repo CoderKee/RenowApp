@@ -21,9 +21,9 @@ ReNow is primarily built on the following tech stack:
 
 # Signing Up
 
-To sign up into ReNow, users can click on the highlighted **Don't have an Account? Sign Up** text which will bring the user to a Sign Up Screen.
+To sign up into ReNow, users can click on the highlighted **Don't have an Account? Sign Up** text which will bring the user to a **Sign Up** Screen.
 
-The Sign Up screen will require 3 text inputs: Username, Password, and Confirm Password. Users should fill in all text inputs.
+The **Sign Up** screen will require 3 text inputs: Username, Password, and Confirm Password. Users should fill in all text inputs.
 
 - Username should be at least 4 letters long  
 - Password should be at least 8 letters long  
@@ -34,13 +34,21 @@ The failure to meet any of the 3 requirements will result in a corresponding err
 Upon filling the text inputs, users should click on the **Sign Up** button.  
 (Note that failure to fill in the 3 aforementioned text inputs will result in an error message asking users to fill in all the required fields.)
 
-After successfully filling in all 3 text fields users will be redirected to a Login screen
+After successfully filling in all 3 text fields users will be redirected to a **Log in** screen
+
+## Developers' note
+
+Currently, the username and password will be passed into 'Users' table in Supabase, for this project, we are not using Supabase's authentication system.  
+
+This decision is made in part that that Supabase 's authentication system requires a valid email address and we are aware that some testers might not feel safe with using their own email address for this project.
+
+However, for developers who wishes to use Supabase authentication, we have commented out a section of a code that uses Supabase authentication, please replace the code with the commented code.
 
 ---
 
 # Logging in
 
-On the log in screen, users will see 2 text input boxes, 
+On the **Log in** screen, users will see 2 text input boxes, 
 
 - Username
 - Password
@@ -48,7 +56,7 @@ On the log in screen, users will see 2 text input boxes,
 Users should fill in both text inputs with the corresponding username and password that they signed up with
 (Note that failure to do so will prompt an error message to states that username and password do not match)
 
-After successfully filling in the text inputs, users should click on the Log in button which will direct users to the 'Home' tab
+After successfully filling in the text inputs, users should click on the **Log in** button which will direct users to the **Home** tab
 
 ---
 # Main tabs of Renow
@@ -71,6 +79,117 @@ There is a total of 4 main tabs in Renow
 
 # Create Listing
 
+The **Create Listing** feature in ReNow allows users to create and post new home service listings, which may include repairs, renovations, installations, and cleaning services. This section walks through:
+
+- Purpose and key features  
+- User flow  
+- User input fields and validations
+- Error handling
+- Backend data handling with Supabase  
+
+
+Developers' note: **Create Listing** 's file is located in PostingScreen.js
+
+## Purpose and Key Features
+
+The **Create Listing** screen enables users to share their home service requests or offer services to the marketplace. It supports:
+
+- Creating new listings  
+- Specifying the service type  
+- Setting a price  
+- Choosing the post type (Request or Service)
+- Image Uploads (to be implemented)
+- Selection of available dates (to be implemented, cannot be seen currently)
+- Storing and updating listings in the Supabase backend
+
+## User flow
+
+The user navigates to the **Create Listing** screen from the app’s main tabs. Users should see a total of 7 components. The **Create Listing** page employs a ScrollView.
+
+**Components:**  
+1. Upload images  (Currently serves no purpose, to be implemented)
+2. Enter a title  
+3. Write a description  
+4. Select a service type  
+5. Enter a price  
+6. Choose to post as a “Request” or “Service”  
+7. Submit the listing  
+
+The user should fill in all the text fields (refer to the next section for which inputs are needed to be filled)
+
+After successfully filling in the required inputs, please click on the **Post** button to post the listing. Upon successful posting, the user will be redirected to the **Listing** tab.
+
+On submission, the app validates the inputs, shows errors if needed, and saves the data to Supabase.
+
+## User Input Fields and Validations
+
+The listing creation form uses several custom and third-party components for a better UX.
+
+### Title
+- **Placeholder:** “Enter Title”  
+- **Validation:** Cannot be empty  
+- **Initial Value:** empty
+  
+The title input allow users to write down the title of their request/service. The title should not be left empty. The title should be brief and should be under 50 characters.
+
+### Description
+- **Placeholder:** “Enter description”  
+- **Validation:** Cannot be empty  
+- **Initial Value:**  empty
+
+The description input allow users to share more details about their request/service. The description should not be left empty. The description input allows up to a maximum of 500 characters.
+
+### Service Type
+- **Default Value:** “Cleaning”  
+- **Available Options:**  
+  - Cleaning  
+  - Installation  
+  - Renovation  
+  - Repairs  
+  - Others  
+- **Validation:** Must select one  
+
+The service type allows user to select the type of service they require/offer.
+
+### Price
+- **Placeholder:** “Enter price”  
+- **Validation:** Cannot be empty  
+
+The price input allows users to share the budget/price of their request/service. The price input is associated with a dollar sign icon. (Note that for Renow, the dollar sign represents the Singaporean currency) The price should not be left empty. The price input allows up to a maximum of 10 characters. (We do not expect a home service/request that costs over a billion Singaporean dollars.)
+
+### Post Type
+- **Options:**  
+  - Request  
+  - Service  
+- **Default:** Request  
+
+The post type allows users to choose whether to upload their post as a request or service. Note that the posting will be uploaded on their respective marketplace tabs (Requests/Services) based on the post type that users selected.
+
+### Error Handling
+If the user tries to submit without filling in all fields (title, description, price), an error message is displayed in red.
+
+## Backend handling with Supabase
+
+When the user presses the **Post** button:
+
+- **Step 1:** The app verifies that all required fields are filled in.  
+- **Step 2:** It requests for the username from the global user context. 
+- **Step 3:** Constructs a listing object (`info`) with all required fields:  
+  - `user_id`  (taken from 'Users' table)
+  - `title`  (text)
+  - `description`  (text)
+  - `price`  (text)
+  - `type` (text)  
+  - `request` (true/false based on Post Type)  
+  - `created_at` (timestamp)  
+
+- **Step 4:**    
+  - It inserts a new record into the “Listings” table.  
+
+- **Step 5:**  
+  - If successful, clears the form and navigates the user back to the **Listing** tab.  
+  - If there’s an error, displays an appropriate error message.
+    
 ---
 
 # Profile
