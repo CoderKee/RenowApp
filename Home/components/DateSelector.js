@@ -124,14 +124,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 15,
-    
   },
   buttonLeft: {
     width: '50%',
   },
   buttonRight: {
     width: '50%',
-    marginLeft: 30,
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
   },
   savedText: {
     color: 'green',
