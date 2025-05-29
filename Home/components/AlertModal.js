@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, Modal, Pressable } from 'react-native'
 import React from 'react'
+import dayjs from 'dayjs'
 
-const AlertModal = ({visible, onCancel, onConfirm, alertText, confirmOption}) => {
+const AlertModal = ({visible, onCancel, onConfirm, alertText, confirmOption, selectedDate}) => {
   return (
     <Modal
       transparent={true}
@@ -11,7 +12,17 @@ const AlertModal = ({visible, onCancel, onConfirm, alertText, confirmOption}) =>
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalText}>{alertText}</Text>
+          <Text style={styles.modalText}>
+            {alertText}
+            {selectedDate && (
+              <>
+                {"\n"}
+                <Text style={{ color: '#4A90E2', fontWeight: 'bold' }}>
+                  {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
+                </Text>
+              </>
+            )}
+          </Text>
           <View style={styles.modalButtons}>
             <Pressable
               style={[styles.modalButton, styles.cancelButton]}
