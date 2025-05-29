@@ -71,7 +71,62 @@ There is a total of 4 main tabs in Renow
 
 # Home
 
----
+The **Home** Screen is the first screen the user sees upon logging in. It is mainly used for viewing Listings made by other users(as well as the user) and also to accept any requests or services.
+In the **Home** Screen, there are 2 other tabs separated by a top tab, HomeRequest and HomeService, for Requests and Services respectively. Furthermore, any Listing can be expanded upon to be viewed in
+greater detail in another screen called ItemDetails.
+
+This section walks through:
+
+- Purpose and key features  
+- User flow  
+- User input and validations
+- Error handling
+- Backend data handling with Supabase
+
+Developers' note: **Home** 's file is located in HomeScreen.js. The two tabs are HomeRequest.js and HomeService.js respectively. The detailed item screen is ItemDetail.js
+
+## Purpose and key features
+
+As mentioned previously, the **Home** screen is mainly used for user to view Listings. It supports the following operations
+- Viewing of Listings in its condensed form
+- Viewing of Listings in detailed form
+- Seperation of Requests and Services
+- A search bar to find Listings based on name (to be implemented)
+- A filter button/function to filter Listings based on specific requires (to be implemented)
+- A calender in the detailed view to facilitate scheduling (to be implemented)
+- Storing and updating Listings using supabase
+
+(Refreshing can be done manually or upon entering the page each time)
+
+## User flow
+
+The user will navigate to the **Home** screen by default after logging in, otherwise they can simply tap on the Home tab on the bottom tabs to navigate to **Home**.
+
+Upon entering the **Home** page the user will see 2 different tabs on top, Request and Service, as well as a bunch of Listings represented as an Item Card.
+An Item Card con tainsthe following:
+- Listing image
+- Title
+- Type (Cleaning, Repair, etc...)
+- Price
+- Brief description
+- A view button
+
+If the user wishes to view the Listing, they may click on the **View** button to bring them to the detailed view, which is a page on top of the **Home** screen
+In the detailed view, the user may see the previously mentioned information with an addition of:
+- All images uploaded by the poster
+- Detailed Description
+- A calendar for the user to choose a date (to be implemented)
+- An accept button
+
+Any user can click on the accept button to accepted any Listing(except their own), after which they will be prompted to confirm their decision through a modal.
+Upon confirmation of acceptance, to user will be brought to their **Accepted Listing** Screen.
+
+If the user views their own Listing in detail, the accept button is greyed out an clicking it will do nothing.
+
+
+##
+##
+##
 
 # Listing
 
