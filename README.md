@@ -78,8 +78,7 @@ greater detail in another screen called ItemDetails.
 This section walks through:
 
 - Purpose and key features  
-- User flow  
-- User input and validations
+- User flow
 - Error handling
 - Backend data handling with Supabase
 
@@ -123,10 +122,11 @@ Upon confirmation of acceptance, to user will be brought to their **Accepted Lis
 
 If the user views their own Listing in detail, the accept button is greyed out an clicking it will do nothing.
 
+## Error handling
 
-##
-##
-##
+If a user tries to accept their own listing, the button will do nothing(coded as onPress={null})
+
+## Backend data handling with Supabase
 
 # Listing
 
