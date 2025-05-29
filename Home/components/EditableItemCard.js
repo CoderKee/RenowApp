@@ -35,6 +35,10 @@ const ItemCard = ({ item, onDelete }) => {
     
   };
 
+  const viewDetail = () => {
+    navigation.navigate('ItemDetails', { item });
+  }
+
   return (
     <View style={styles.itemContainer}>
       <View style={[styles.header, { backgroundColor: headerColour }]}>

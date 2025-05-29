@@ -70,10 +70,13 @@ const MyListing = ({username, navigation}) => {
     if (error) {
       console.error('Error fetching items:', error);
     } else if (data) {
-      if (data.length < PAGE_SIZE) {
-        setNoMoreData(true);
+      if (reset) {
+        setItems(data);
+      } else {
+        setItems((prevItems) => [...prevItems, ...data]);
       }
-      setItems((prevItems) => [...prevItems, ...data]);
+      setNoData(data.length === 0 && pageNumber === 0);
+      setNoMoreData(data.length < PAGE_SIZE);
       setPage(pageNumber + 1);
     }
     setLoading(false);

@@ -1,24 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, ScrollView, StyleSheet, FlatList, Image } from 'react-native';
+import React, {useState, useEffect} from 'react'
 import DropDownPicker from 'react-native-dropdown-picker';
-import CustomDescriptionInput from './components/CustomDescriptionInput';
-import CustomTitleInput from './components/CustomTitleInput';
-import CustomPriceInput from './components/CustomPriceInput';
-import CustomButton from './components/CustomButton';
-import { supabase } from '../server/supabase.js';
-import { useUser } from './globalContext/UserContext.js';
+import CustomDescriptionInput from './CustomDescriptionInput';
+import CustomTitleInput from './CustomTitleInput';
+import CustomPriceInput from './CustomPriceInput';
+import CustomButton from './CustomButton';
+import { useUser } from '../globalContext/UserContext.js';
+import { supabase } from '../../server/supabase.js';
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  ScrollView, 
+  StyleSheet, 
+  FlatList, 
+  Image 
+} from 'react-native';
 
-const PostingScreen = ({ route, navigation }) => {
-  const { username, item } = route?.params || {};
+const EditScreen = ({ route, navigation }) => {
+  
+  const { item } = route?.params || {};
   const [error, setError] = useState('');
   const [images, setImages] = useState([]);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-
+  const [title, setTitle] = useState(item?.title || '');
+  const [description, setDescription] = useState(item?.description || '');
+  const [price, setPrice] = useState(item?.price?.toString() || '');
+  const [postType, setPostType] = useState('Request');
 
   const [open, setOpen] = useState(false);
-  const [serviceType, setServiceType] = useState('Cleaning');
+  const [serviceType, setServiceType] = useState(item.type || 'Cleaning');
   const [items, setItems] = useState([
     { label: 'Cleaning', value: 'Cleaning' },
     { label: 'Installation', value: 'Installation' },
@@ -26,93 +35,53 @@ const PostingScreen = ({ route, navigation }) => {
     { label: 'Repairs', value: 'Repairs' },
     { label: 'Others', value: 'Others' },
   ]);
-  const [postType, setPostType] = useState('Request');
   const [postTypeOpen, setPostTypeOpen] = useState(false);
   const [postTypeItems, setPostTypeItems] = useState([
     { label: 'Request', value: 'Request' },
     { label: 'Service', value: 'Service' },
   ]);
 
-  useEffect(() => {
-    if (item) {
-      setTitle(item.title || '');
-      setDescription(item.description || '');
-      setPrice(item.price?.toString() || '');
-      setServiceType(item.type || 'Cleaning');
-      setImages(item.images || []);
-      setPostType(item.request ? 'Request' : 'Service')
-    } else {
-      setTitle('');
-      setDescription('');
-      setPrice('');
-      setServiceType('Cleaning');
-      setImages([]);
-      setPostType('Request')
-    }
-  }, [item]);
+  const { username } = useUser();
+
+  // change this once image functionality is implemented
+  const renderImage = ({ item }) => (
+    <Image source={{ uri: item }} style={styles.imageThumbnail} />
+  );
 
   const addImage = () => {
 
   };
 
-  const renderImage = ({ item }) => (
-    <Image source={{ uri: item }} style={styles.imageThumbnail} />
-  );
-
-  const post = async () => {
+  const updateListing = async () => {
     setError("");
     if (!title || !description || !price) {
       setError("Please fill in all text fields.");
       return;
     }
+    const { data, error } = await supabase
+      .from('Listings')
+      .update({
+        title: title,
+        description: description,
+        price: price,
+        type: serviceType,
+        request: postType === 'Request',
+      })
+      .eq('listing_id', item.listing_id);
 
-    const { data: user, error: userError } = await supabase
-      .from('Users')
-      .select('user_id')
-      .eq('username', username)
-      .single();
-
-    if (userError || !user) {
-      setError("User not found.");
-      return;
-    }
-
-    const info = {
-      user_id: user.user_id,
-      title,
-      description,
-      price,
-      type: serviceType,
-      request: postType === 'Request' ? true : false,
-      created_at: new Date().toISOString(),
-    };
-
-    let result;
-    if (item && item.listing_id) {
-      result = await supabase
-        .from('Listings')
-        .update(info)
-        .eq('listing_id', item.listing_id);
+    if (error) {
+      console.error('Error updating listing:', error);
+      setError("Error updating listing.");
     } else {
-      result = await supabase
-        .from('Listings')
-        .insert([info]);
+      console.log('Listing updated successfully:', data);
+      navigation.goBack();
     }
-
-    if (result.error) {
-      setError("Error saving listing.");
-    } else {
-      setError("");
-      setTitle('');
-      setDescription('');
-      setPrice('');
-      setServiceType('Cleaning');
-      navigation.setParams({ item: undefined });
-      navigation.navigate('Listing');
-    }
-  };
+    
+  }
 
   return (
+    
+    
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>Upload Images</Text>
       <FlatList
@@ -143,14 +112,7 @@ const PostingScreen = ({ route, navigation }) => {
         setItems={setItems}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
-        /* [for listMode: Modal if there are multiple options in the future]
-        modalProps={{
-          animationType: 'fade',
-          transparent: false,
-        }}
-        modalTitle="Select service type"
-        modalAnimationType="slide"
-        */
+        
         listMode="SCROLLVIEW"  
       />
       <Text style={styles.label}>Price</Text>
@@ -175,15 +137,18 @@ const PostingScreen = ({ route, navigation }) => {
 
       <View style={styles.buttonRow}>
         <CustomButton
-          text={item ? "Update" : "Post"}
-          onPress={post}
+          text="Update"
+          onPress={updateListing}
           color="maroon"
         />
         
       </View>
     </ScrollView>
-  );
-};
+    
+  )
+}
+
+export default EditScreen
 
 const styles = StyleSheet.create({
   container: {
@@ -230,6 +195,4 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
-});
-
-export default PostingScreen;
+})
