@@ -72,6 +72,7 @@ There is a total of 4 main tabs in Renow
 # Home
 
 The **Home** Screen is the first screen the user sees upon logging in. It is mainly used for viewing Listings made by other users(as well as the user) and also to accept any requests or services.
+
 In the **Home** Screen, there are 2 other tabs separated by a top tab, HomeRequest and HomeService, for Requests and Services respectively. Furthermore, any Listing can be expanded upon to be viewed in
 greater detail in another screen called ItemDetails.
 
@@ -97,6 +98,10 @@ As mentioned previously, the **Home** screen is mainly used for user to view Lis
 
 (Refreshing can be done manually or upon entering the page each time)
 
+Both postings for requests and services will be arranged based on the most recent date of creation.
+
+Since Renow is a global marketplace, requests/services may be uploaded at any moment. Hence, it is recommended that users periodically refresh to see the latest requests/services.
+
 ## User flow
 
 The user will navigate to the **Home** screen by default after logging in, otherwise they can simply tap on the Home tab on the bottom tabs to navigate to **Home**.
@@ -111,8 +116,9 @@ An Item Card contains the following:
 - A view button
 
 If the user wishes to view the Listing, they may click on the **View** button to bring them to the detailed view, which is a page on top of the **Home** screen
+
 In the detailed view, the user may see the previously mentioned information with an addition of:
-- All images uploaded by the poster
+- All images uploaded by the poster (to be implemented)
 - Detailed Description
 - A calendar for the user to choose a date (to be implemented)
 - An accept button
@@ -123,6 +129,8 @@ Upon confirmation of acceptance, to user will be brought to their **Accepted Lis
 If the user views their own Listing in detail, the accept button is greyed out an clicking it will do nothing.
 
 ## Error handling
+
+Note that most error handling is done during the **Create Listing** section to ensure that all the necessary information are provided to display a smooth listing section and item details.
 
 If a user tries to accept their own listing, the button will do nothing(coded as onPress={null}). In fact, the button is greyed out for any cases where the user is unable to accept the request.
 
@@ -142,6 +150,8 @@ If a user tries to accept their own listing, the button will do nothing(coded as
   
   **Step 5:**  
   After the user accepts the request, supabase updates the Listing with the name of the acceptor and sends the user to the Accepted Listing Screen to view their List of accepted Listings
+
+---
 
 # Listing
 
@@ -188,6 +198,112 @@ react-native
 
 supabase for backend data
 
+## My Listing
+
+My Listing is a tab that displays the user's own unaccepted listings, allowing editing and deletion via EditableItemCard.
+
+The EditableItemCard shares a similar design to the ItemCard with 2 additional pressable Icons:
+
+- Edit icon (depicted as a pen) to allow users to edit posting
+- Delete icon (depicted as a trash can) to allow users to delete posting
+
+On pressing the Edit icon, users will be redirected to a seperate Stack screen (EditScreen.js)
+
+On pressing the Delete icon, a pop-up modal for appear for confirmation.  
+
+On the pop-up modal, users should see the following
+- "Are you sure you want to delete this item" text
+- Red button for "Delete"
+- Gray button for "Cancel"
+
+If the user wishes to delete their listing, please click on the "Delete" button  
+If the user wishes to cancel their delete, please click on the "Cancel" button
+
+### Edit Listing screen [Follow-up on MyListing. To see Create Listing scroll to the next section] 
+
+When users clicked on the Edit icon, users will be directed to this screen.
+
+The **Edit Listing** screen enables users to edit their posting. It supports:
+
+- Editing the title
+- Editing the description
+- Editing the service type  
+- Editing the price  
+- Editing the post type (Request or Service)
+- Editing image uploads (to be implemented)
+- Editing the selection of available dates (to be implemented, cannot be seen currently)
+- Updating listings in the Supabase backend
+
+#### Components
+
+Users should see a total of 7 components.
+
+**Components:**  
+1. Upload images  (Currently serves no purpose, to be implemented)
+2. Enter a title  
+3. Write a description  
+4. Select a service type  
+5. Enter a price
+6. A calendar (to be implemented)
+7. Choose to post as a “Request” or “Service”  
+8. Update the listing  
+
+Note that the components displayed ere are similar to the one in "Create listing" screen, however the componenet should be pre-filled with the user's pre-filled posting information.
+
+Similarly, all text fields must be filled or an error message will be shown.
+
+(For further information on each individual components, please head to the "Create listing" section)
+
+#### Backward navigation
+
+Users should see a backward button on the top of their screen, upon pressing this button, users will be redirected to the MyListing page.
+
+When users pressed the backward button, the updates **will not** be saved. It is assumed that users wishes to cancel the updates.
+
+If users wishes to update, please select the **Update** button instead.
+
+#### Updating the posting
+
+After users have made the necessary changes, they should click on the **Update** button to update the posting.
+
+Note that clicking on the **Back** button will not update the posting.
+
+On successful update, the user will be redirected to the MyListing screen. The users should see that their updated listing now contains the necessary changes.
+
+#### Error Handling
+
+If the user tries to submit without filling in all fields (title, description, price), an error message is displayed in red.
+
+#### Backend handling with Supabase
+
+When the user presses the **Post** button:
+
+- **Step 1:** The app retrieves the previous listing information from the Supabase. (Listing id is passed from the My Listing screen)
+- **Step 2:** The app validates that all text fields are filled.
+- **Step 3:** Updates the listing object (`Listings`) with all required fields:  
+  - `user_id`  (taken from 'Users' table)
+  - `title`  (text)
+  - `description`  (text)
+  - `price`  (text)
+  - `type` (text)  
+  - `request` (true/false based on Post Type)  
+  - `created_at` (timestamp)  
+
+- **Step 4:**    
+  - It updates the record on the Listing table.
+
+- **Step 5:**  
+  - If successful, navigates the user back to the **My Listing** tab.  
+  - If there’s an error, displays an appropriate error message.
+
+## Accept Listing
+
+## Claimed Listing
+
+---
+
+---
+
 # Create Listing
 
 The **Create Listing** feature in ReNow allows users to create and post new home service listings, which may include repairs, renovations, installations, and cleaning services. This section walks through:
@@ -222,9 +338,10 @@ The user navigates to the **Create Listing** screen from the app’s main tabs. 
 2. Enter a title  
 3. Write a description  
 4. Select a service type  
-5. Enter a price  
-6. Choose to post as a “Request” or “Service”  
-7. Submit the listing  
+5. Enter a price
+6. A calendar (to be implemented)
+7. Choose to post as a “Request” or “Service”  
+8. Submit the listing  
 
 The user should fill in all the text fields (refer to the next section for which inputs are needed to be filled)
 
@@ -285,7 +402,7 @@ When the user presses the **Post** button:
 
 - **Step 1:** The app verifies that all required fields are filled in.  
 - **Step 2:** It requests for the username from the global user context. 
-- **Step 3:** Constructs a listing object (`info`) with all required fields:  
+- **Step 3:** Constructs a listing object (`Listings`) with all required fields:  
   - `user_id`  (taken from 'Users' table)
   - `title`  (text)
   - `description`  (text)
