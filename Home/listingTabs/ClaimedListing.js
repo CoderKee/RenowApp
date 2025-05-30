@@ -12,10 +12,10 @@ import {
   FlatList 
 } from 'react-native';
 
-
 const PAGE_SIZE = 5;
 
-const AcceptedListing = () => {
+const ClaimedListing = () => {
+    
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -26,18 +26,19 @@ const AcceptedListing = () => {
   const { username } = useUser();
 
   const fetchItems = async (pageNumber) => {
-  if (loading || noMoreData) return;
-  setLoading(true);
+    if (loading || noMoreData) return;
+    setLoading(true);
 
-  const from = pageNumber * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
+    const from = pageNumber * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
 
-  const { data, error } = await supabase
-    .from('Listings')
-    .select('*')
-    .eq('accepted_by', username)
-    .order('created_at', { ascending: false })
-    .range(from, to);
+    const { data, error } = await supabase
+      .from('Listings')
+      .select('*, Users!inner(username)')
+      .eq('Users.username', username)
+      .eq('accepted', true)
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     if (error) {
       console.error('Error fetching items:', error);
@@ -86,7 +87,7 @@ const AcceptedListing = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {noData && <Text style={styles.text}>No accepted listings</Text>}
+      {noData && <Text style={styles.text}>No claimed listings</Text>}
       {!noData && 
         <FlatList
           data={items}
@@ -102,39 +103,40 @@ const AcceptedListing = () => {
           refreshing={refreshing}
           onRefresh={handleRefresh}
         />
-      }
+      } 
     </SafeAreaView>
+ 
   );
 }
 
-export default AcceptedListing;
+export default ClaimedListing;
 
 const styles = StyleSheet.create({
     container: {
-    flex: 1,
-    padding: 10,
-  },
-  itemContainer: {
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  header: {
-    padding: 10,
-  },
-  headerText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  description: {
-    fontSize: 16,
-  },
-  loader: {
-    marginVertical: 20,
-  },
-  text: {
+        flex: 1,
+        padding: 10,
+    },
+    itemContainer: {
+        marginVertical: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    header: {
+        padding: 10,
+    },
+    headerText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    description: {
+        fontSize: 16,
+    },
+    loader: {
+        marginVertical: 20,
+    },
+    text: {
     fontSize: 25,
     fontWeight: 'bold',
     alignSelf: 'center'
