@@ -17,7 +17,6 @@ import {
     TouchableOpacity, 
     
 } from 'react-native'
-import { Icon } from '@rneui/themed';
 
 const ItemDetails = ({ route, navigation }) => {
     const { item } = route.params;
@@ -49,7 +48,7 @@ const ItemDetails = ({ route, navigation }) => {
                         style={{ marginRight: 15 }}
                         onPress={unAcceptTask}
                     >
-                        <Icon name="cancel" size={30} color='maroon'/> 
+                        <MaterialIcons name="cancel" size={30} color='maroon'/> 
                     </TouchableOpacity>
 
                 )

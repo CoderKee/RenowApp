@@ -2,7 +2,6 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainTabs from "./MainTabs";
 import ItemDetails from "./homeTabs/ItemDetails";
-import AcceptedListing from "./listingTabs/AcceptedListing";
 import EditScreen from "./components/EditScreen";
 
 const Stack = createStackNavigator();
