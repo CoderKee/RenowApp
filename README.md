@@ -453,3 +453,17 @@ When the user presses the **Post** button:
 ---
 
 # Profile
+
+The profile tab allows user to read more details regarding their user profile on Renow. It also comes with the **Log out** icon to enable users to log out of Renow.
+
+The profile tab will provide the following details:
+- User's completed listing
+- User's review
+- User's rating
+
+## Logging out
+
+Users can click on the **Exit** icon at the top right side of their screen. Upon clicking the icon, the user will be prompted with a confirmation message on whether they want to log out of Renow.
+
+If the user wishes to log out, please select **Logout**  
+Otherwise, please select **Cancel**
