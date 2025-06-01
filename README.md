@@ -49,6 +49,10 @@ We also plan to rely heavily on Custom components instead of native react compon
 
 # Accessing the App
 
+## Android users
+
+## IOS users
+
 ---
 
 # Signing Up
