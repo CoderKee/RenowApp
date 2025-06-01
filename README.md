@@ -51,6 +51,28 @@ We also plan to rely heavily on Custom components instead of native react compon
 
 ## Android users
 
+For android users, the steps are quite simple, albeit you need to allow for the installation of unknown apps through the web.
+
+1. **Download the APK**
+   - Visit the following link to download the latest RenowApp APK file:
+     - [Download RenowApp APK](<https://expo.dev/accounts/coderkee/projects/renowapp/builds/d38c0f2f-dd7e-4064-8061-df8eede96a6e>)
+   - If prompted, allow your browser to download files from unknown sources.
+
+2. **Install the APK**
+   - Once the download is complete, open the APK file from your device's Downloads folder.
+   - If this is your first time installing an app outside of the Google Play Store, you may need to enable installation from unknown sources:
+     - Go to **Settings > Security** (or **Settings > Apps & notifications > Special app access > Install unknown apps**).
+     - Select your browser or file manager and enable **Allow from this source**.
+   - Follow the on-screen prompts to complete the installation.
+
+3. **Open RenowApp**
+   - After installation, tap the RenowApp icon on your home screen or app drawer to launch the app.
+
+4. **Sign Up or Log In**
+   - Create a new account or log in with your existing credentials to start using RenowApp.
+
+> **Note:** The app is currently available for Android only. If you encounter any issues during installation, please email us.
+
 ## IOS users
 
 Renow currently do not support native IOS application. Hence, it is recommended that users download **Android Studio** to access the Renow app. Please follow the download guide below.
