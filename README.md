@@ -1,4 +1,4 @@
-# ReNow
+# ReNow (Apollo level)
 
 ReNow is a public marketplace for home services. The range of home services that the marketplace covers includes but is not limited to:
 
@@ -12,6 +12,38 @@ ReNow is primarily built on the following tech stack:
 - **React Native (JavaScript)** for designing the application  
 - **Expo** for deployment  
 - **Supabase** for backend and database management  
+
+## Problem motivation
+
+Ever had broken plumbing, appliances or made a dent in the wall and not knowing how to fix them? These things happen rather often and the solutions may not be readily available to most people. The services providers for these problem may be hard to find mainly due to the fact that owners of such businesses might not be internet-savvy enough to publish their adverts online. Many times, home service providers rely on door-to-door marketing (e.g. fridge magnets, posters) which incurs high advertising and logisitcal cost and lower reach.
+
+The pricing for these services may also vary heavily while not being standardised. Due to the minimal online presence by providers, home owners do not have the full picture of the prices available to them and are unable to come to an informed choice when deciding which option best suits their needs.
+
+Currently, there are websites where you can find specific services (e.g. renovation). But, how about one app to rule them all? Here we would be able to access all sorts of home fixing services and even renovation services. Freelancers could also use this app to offer and accept requests. This app enables both home owners and home service providers to access better resources to source for services and clients.
+
+## Core features
+
+The Renow app will be equipped with a myriad of features that helps to smoothen the process of finding and delivering home services. Our features include:
+
+- Allowing home owners to upload their requests
+- Allowing home service providers to upload the services that they offer
+- Enabling the modification and deletion of posting
+- Enabling image uploads for providers to assess the issue readily
+- Allowing users to schedule their meeting
+- A personal calendar for users to track their schedule
+- Allowing users to write reviews their experience
+- A rating system for users to rate their experience
+- Type matching capability
+- Price matching capablity
+- Search function
+
+**These set of features are tentative**
+
+## Design planning
+
+Renow aims to take inspiration from successful marketplace applications (such as Shopee, Carousell etc.) to provide our users with the best experience when using our app.
+
+We also plan to rely heavily on Custom components instead of native react components to ensure that both Android and IOS users will enjoy the same experience when using our app.
 
 ---
 
