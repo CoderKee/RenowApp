@@ -53,6 +53,66 @@ We also plan to rely heavily on Custom components instead of native react compon
 
 ## IOS users
 
+Renow currently do not support native IOS application. Hence, it is recommended that users download **Android Studio** to access the Renow app. Please follow the download guide below.
+
+### Install Android Studio
+
+Visit the [official Android Studio download page](https://developer.android.com/studio).  
+Download the installer for your operating system.  
+Follow the on-screen instructions to complete the installation.  
+Ensure you install the Android Emulator and Android Virtual Device (AVD) Manager during setup.
+
+### Launch Android Studio
+
+Open Android Studio.  
+If it’s your first time, complete the setup wizard.
+
+### Open or Create a Project
+
+**Create a new project:**
+- Go to **File → New → New Project…**
+- Choose a template (like **Empty Activity**), click **Next**.
+- Fill in project name and location.
+- Click **Finish**.
+
+**Or open an existing project**.
+
+### Open the AVD Manager
+
+In the top-right corner, look for the **Device Manager** icon (smartphone icon) and click it.  
+Alternatively, go to **Tools → Device Manager**.
+
+### Create a New Virtual Device
+
+In the **Device Manager**, click **“+ Create device”**.  
+Select a hardware profile (e.g., Pixel 7, Nexus 5X), then click **Next**.
+
+### Select the System Image
+
+You’ll see a list of system images (Android OS versions).  
+If needed, download the image by clicking the **Download** link.  
+Once downloaded, select the image and click **Next**.
+
+### Configure the Emulator
+
+In the **AVD configuration window**:
+- Set the name (or keep the default).
+- Choose portrait or landscape orientation.
+- Adjust RAM, storage, etc. under **Advanced Settings** (optional).
+
+Click **Finish** to create the emulator.
+
+### Launch the Emulator
+
+In the **Device Manager**, find your newly created emulator. 
+Click the play (▶️) button to start the emulator.  
+Wait a few seconds as it boots up.
+
+### Running Renow
+
+Users can now treat the emulator as their personal **Android** phone.  
+Please follow the guide on how to run the Renow App for **Android users**
+
 ---
 
 # Signing Up
