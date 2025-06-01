@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../server/supabase.js';
 import { useUser } from '../Home/globalContext/UserContext.js';
-import { CommonActions } from '@react-navigation/native';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   StyleSheet,
   View,
@@ -10,7 +9,6 @@ import {
   Text,
   Button,
   TouchableOpacity,
-  Alert
 } from "react-native";
 import CustomInput from "./components/CustomInput";
 import CustomButton from './components/CustomButton';
@@ -138,46 +136,51 @@ export default function Testing({ navigation }) {
       }
 
     return (
-      <View style={styles.container}>
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        extraScrollHeight={30}
+      >
+        <View style={styles.container}>
 
-        <Image 
-            source={require("../assets/Renow.png")} 
-            style={styles.logo}
-            resizeMode='contain'
-        />
+          <Image 
+              source={require("../assets/Renow.png")} 
+              style={styles.logo}
+              resizeMode='contain'
+          />
 
-        {error !== "" && (
-          <Text style={{color: 'red'}}>
-            {error}
-          </Text>
-        )}
-        <CustomInput placeholder='Username' value={username} setValue={setUser} secure={false} icon={require("../assets/UserIcon.png")}/>
+          {error !== "" && (
+            <Text style={{color: 'red'}}>
+              {error}
+            </Text>
+          )}
+          <CustomInput placeholder='Username' value={username} setValue={setUser} secure={false} icon={require("../assets/UserIcon.png")}/>
 
-        <CustomInput placeholder='Password' value={password} setValue={setPassword} secure={true} icon={require("../assets/PasswordIcon.png")}/>
+          <CustomInput placeholder='Password' value={password} setValue={setPassword} secure={true} icon={require("../assets/PasswordIcon.png")}/>
 
-        {!isLogin && (
-                <CustomInput
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  setValue={setConfirmPassword}
-                  secure={true}
-                  icon={require("../assets/PasswordIcon.png")}
-                />
-              )}
+          {!isLogin && (
+                  <CustomInput
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    setValue={setConfirmPassword}
+                    secure={true}
+                    icon={require("../assets/PasswordIcon.png")}
+                  />
+                )}
 
-        <CustomButton onPress={isLogin ? handleLogin : handleSignUp} text={isLogin ? "Login" : "Sign Up"}/>
-        
-        <TouchableOpacity
-                onPress={() => setIsLogin(!isLogin)}
-                style={{ marginTop: 20 }}
-              >
-                <Text style={styles.toggleText}>
-                  {isLogin
-                    ? "Don't have an account? Sign Up"
-                    : "Already have an account? Login"}
-                </Text>
-              </TouchableOpacity>
-      </View>
+          <CustomButton onPress={isLogin ? handleLogin : handleSignUp} text={isLogin ? "Login" : "Sign Up"}/>
+          
+          <TouchableOpacity
+                  onPress={() => setIsLogin(!isLogin)}
+                  style={{ marginTop: 20 }}
+                >
+                  <Text style={styles.toggleText}>
+                    {isLogin
+                      ? "Don't have an account? Sign Up"
+                      : "Already have an account? Login"}
+                  </Text>
+                </TouchableOpacity>
+        </View>
+      </KeyboardAwareScrollView>
     );
 }
 

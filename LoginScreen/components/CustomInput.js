@@ -16,8 +16,9 @@ const CustomInput = ({value, setValue, placeholder, secure, icon}) => {
             <Image source={icon} style = {styles.logo}/>
             <View style={styles.divider}></View>
             <TextInput 
-                    style={{flex: 1, paddingVertical:12}}
+                    style={{flex: 1, paddingVertical:12, color: 'black'}}
                     placeholder={placeholder}
+                    placeholderTextColor="#888"
                     value={value}
                     onChangeText={setValue}
                     autoCapitalize="none"

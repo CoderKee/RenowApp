@@ -5,8 +5,8 @@ import { supabase } from '../../server/supabase';
 import { useUser } from '../globalContext/UserContext';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import  AlertModal  from '../components/AlertModal';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { 
-    SafeAreaView, 
     ScrollView, 
     StyleSheet, 
     Text, 
@@ -16,7 +16,7 @@ import {
     RefreshControl,
     TouchableOpacity, 
     
-} from 'react-native'
+} from 'react-native';
 
 const ItemDetails = ({ route, navigation }) => {
     const { item } = route.params;
@@ -25,6 +25,8 @@ const ItemDetails = ({ route, navigation }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [unacceptedModalVisible, setUnacceptedModalVisible] = useState(false);
+
+    const insets = useSafeAreaInsets();
 
     const fetchPosterUserName = useCallback(async () => {
         if (!item.user_id) return;
@@ -99,7 +101,7 @@ const ItemDetails = ({ route, navigation }) => {
     }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView 
       contentContainerStyle={styles.contentContainer}
       styles={styles.scrollArea}
@@ -124,10 +126,10 @@ const ItemDetails = ({ route, navigation }) => {
         >
             <Text style={styles.title}>{item.title.toUpperCase()}</Text>
             <Text style={styles.price}>${item.price}</Text>
-            <Text>Listed By {posterUsername}</Text>
-            <Text>On {formatDate(item.created_at)}</Text>
+            <Text style={styles.font}>Listed By{posterUsername}</Text>
+            <Text style={styles.font}>On {formatDate(item.created_at)}</Text>
             <Text style={styles.description}>Description</Text>
-            <Text>{item.description}</Text>
+            <Text style={styles.font}>{item.description}</Text>
         </View>
       </ScrollView>
       <View style={styles.accept}>
@@ -203,7 +205,7 @@ const ItemDetails = ({ route, navigation }) => {
         alertText="Are you sure you want to un-accept this task?"
         confirmOption="Undo Accept"
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -243,10 +245,13 @@ const styles = StyleSheet.create({
         flex: 4, 
         padding: 10,
     },
-
+    font: {
+        color: 'black',
+    },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
+        color: 'black',
     },
     price: {
         color: 'green'
@@ -255,6 +260,7 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 20,
         fontWeight: 'bold',
+        color: 'black',
     },
 
     accept: {
@@ -264,6 +270,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderTopWidth: 1,
         borderTopColor: '#ddd',
-        paddingBottom: 10
     }
 })

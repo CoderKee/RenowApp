@@ -31,7 +31,7 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Your Profile Screen</Text>
+      <Text style={styles.color}>Your Profile Screen</Text>
     </View>
   );
 
@@ -39,4 +39,8 @@ const ProfileScreen = ({ navigation }) => {
 
 export default ProfileScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  text: {
+    color: 'black',
+  }
+})

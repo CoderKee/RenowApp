@@ -20,6 +20,7 @@ const CustomPriceInput = ({ value, setValue, placeholder, charLimit = 10 }) => {
         <TextInput
           style={styles.input}
           placeholder={placeholder}
+          placeholderTextColor="#888"
           value={value}
           onChangeText={handleChange}
           keyboardType="numeric"
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     fontSize: 14,
+    color: 'black',
 
   },
   charCount: {

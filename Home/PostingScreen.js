@@ -5,6 +5,7 @@ import CustomDescriptionInput from './components/CustomDescriptionInput';
 import CustomTitleInput from './components/CustomTitleInput';
 import CustomPriceInput from './components/CustomPriceInput';
 import CustomButton from './components/CustomButton';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { supabase } from '../server/supabase.js';
 import { useUser } from './globalContext/UserContext.js';
 
@@ -116,7 +117,11 @@ const PostingScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAwareScrollView 
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={20}
+    >
       <Text style={styles.label}>Upload Images</Text>
       <FlatList
         horizontal
@@ -184,7 +189,7 @@ const PostingScreen = ({ route, navigation }) => {
         />
         
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 };
 

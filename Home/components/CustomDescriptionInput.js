@@ -9,6 +9,7 @@ const CustomDescriptionInput = ({ value, setValue, placeholder, charLimit = 500 
         <TextInput
           style={styles.input}
           placeholder={placeholder}
+          placeholderTextColor="#888"
           value={value}
           onChangeText={setValue}
           autoCapitalize="none"
@@ -40,11 +41,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
+    
   },
   input: {
     flex: 1,
     paddingVertical: 12,
     fontSize: 12,
+    color: 'black',
   },
   charCount: {
     marginTop: 5,
