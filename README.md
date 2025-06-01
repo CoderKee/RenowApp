@@ -180,12 +180,11 @@ After successfully filling in the text inputs, users should click on the **Log i
 # Main tabs of Renow
 
 There is a total of 4 main tabs in Renow
+
 - Home
 - Listing
 - Create Listing
 - Profile
-
----
 
 # Home
 
