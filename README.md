@@ -332,13 +332,91 @@ When the user presses the **Post** button:
   - If successful, navigates the user back to the **My Listing** tab.  
   - If there’s an error, displays an appropriate error message.
 
-## Accept Listing
+## Accepted Listing
+
+### Purpose
+
+The **Accepted Listing** tab allows users to view all listings they have accepted within the RenowApp marketplace. This helps users keep track of the jobs or requests they have committed to, ensuring efficient management of their accepted tasks.
+
+### Features
+
+- **View Accepted Listings:** Displays a paginated list of all listings accepted by the current user.
+- **Infinite Scroll & Pagination:** Loads more accepted listings as the user scrolls.
+- **Pull-to-Refresh:** Users can refresh the list to see the latest accepted listings.
+- **No Data Handling:** Shows a message if there are no accepted listings.
+- **Integration with Item Details:** Tapping a listing navigates to a detailed view for further actions or information.
+
+### Dependencies
+
+- [`@react-navigation/native`](https://reactnavigation.org/)
+- [`@react-navigation/material-top-tabs`](https://reactnavigation.org/docs/material-top-tab-navigator/)
+- [`react-native`](https://reactnative.dev/)
+- [`@supabase/supabase-js`](https://supabase.com/docs/reference/javascript)
+- [`react-native-vector-icons`](https://github.com/oblador/react-native-vector-icons)
+
+### How It Works with Supabase
+
+- **Fetching Data:** The component queries the `Listings` table in Supabase, filtering for rows where the `accepted_by` field matches the current user's username.
+- **Pagination:** Uses Supabase's `.range()` method to fetch listings in pages (default 5 per page).
+- **Refreshing:** On pull-to-refresh or tab focus, the component re-queries Supabase to ensure the data is up to date.
+- **Data Structure:** Each listing includes details such as title, description, price, and status, which are rendered in the UI.
+
+**Example Supabase Query:**
+```js
+const { data, error } = await supabase
+  .from('Listings')
+  .select('*')
+  .eq('accepted_by', username)
+  .order('created_at', { ascending: false })
+  .range(from, to);
+```
+
+### File Location
+
+The main implementation can be found in [`Home/listingTabs/AcceptedListing.js`](Home/listingTabs/AcceptedListing.js).
 
 ## Claimed Listing
 
----
+### Purpose
 
----
+The **Claimed Listing** tab displays all listings that the current user has claimed within RenowApp. This feature helps users manage and track the jobs or requests they have taken responsibility for, ensuring they can easily access and review their claimed tasks.
+
+### Features
+
+- **View Claimed Listings:** Shows a paginated list of all listings claimed by the user.
+- **Infinite Scroll & Pagination:** Loads more claimed listings as the user scrolls down.
+- **Pull-to-Refresh:** Allows users to refresh the list to see the latest claimed listings.
+- **No Data Handling:** Displays a message if there are no claimed listings.
+- **Integration with Item Details:** Tapping a listing navigates to a detailed view for more information or actions.
+
+### Dependencies
+
+- [`@react-navigation/native`](https://reactnavigation.org/)
+- [`@react-navigation/material-top-tabs`](https://reactnavigation.org/docs/material-top-tab-navigator/)
+- [`react-native`](https://reactnative.dev/)
+- [`@supabase/supabase-js`](https://supabase.com/docs/reference/javascript)
+- [`react-native-vector-icons`](https://github.com/oblador/react-native-vector-icons)
+
+### How It Works with Supabase
+
+- **Fetching Data:** The component queries the `Listings` table in Supabase, filtering for rows where the `claimed_by` field matches the current user's username.
+- **Pagination:** Uses Supabase's `.range()` method to fetch listings in pages (default 5 per page).
+- **Refreshing:** On pull-to-refresh or tab focus, the component re-queries Supabase to ensure the data is up to date.
+- **Data Structure:** Each listing includes details such as title, description, price, and status, which are rendered in the UI.
+
+**Example Supabase Query:**
+```js
+const { data, error } = await supabase
+  .from('Listings')
+  .select('*')
+  .eq('claimed_by', username)
+  .order('created_at', { ascending: false })
+  .range(from, to);
+```
+
+### File Location
+
+The main implementation can be found in [`Home/listingTabs/ClaimedListing.js`](Home/listingTabs/ClaimedListing.js).
 
 # Create Listing
 
