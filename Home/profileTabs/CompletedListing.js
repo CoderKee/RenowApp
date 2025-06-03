@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const CompletedRequest = () => {
+const CompletedListing = () => {
   return (
     <View>
-      <Text>CompletedRequest</Text>
+      <Text>CompletedListing</Text>
     </View>
   )
 }
 
-export default CompletedRequest
+export default CompletedListing
 
 const styles = StyleSheet.create({})

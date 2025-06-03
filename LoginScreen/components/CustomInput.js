@@ -18,6 +18,7 @@ const CustomInput = ({value, setValue, placeholder, secure, icon}) => {
             <TextInput 
                     style={{flex: 1, paddingVertical:12}}
                     placeholder={placeholder}
+                    placeholderTextColor={"#888"}
                     value={value}
                     onChangeText={setValue}
                     autoCapitalize="none"

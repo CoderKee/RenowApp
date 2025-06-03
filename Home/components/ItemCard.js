@@ -112,7 +112,8 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingHorizontal:5,
-    fontSize: 25
+    fontSize: 25,
+    color:'black'
   },
   price: {
     paddingHorizontal: 5,
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
   description: {
     padding: 5,
     fontSize: 16,
+    color: 'black',
   },
   details: {
     

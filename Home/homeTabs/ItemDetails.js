@@ -4,9 +4,10 @@ import CustomButton from '../components/CustomButton';
 import { supabase } from '../../server/supabase';
 import { useUser } from '../globalContext/UserContext';
 import AlertModal from '../components/AlertModal';
-import { Icon } from '@rneui/themed';
+import { Icon } from 'react-native-vector-icons/MaterialIcons';
 import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
     ScrollView, 
     StyleSheet, 
@@ -107,7 +108,7 @@ const ItemDetails = ({ route, navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* Image scroll might be buggy */}
             <ScrollView 
                 contentContainerStyle={styles.contentContainer}
@@ -170,10 +171,10 @@ const ItemDetails = ({ route, navigation }) => {
                 <View style={styles.descriptionContainer}>
                     <Text style={styles.title}>{item.title.toUpperCase()}</Text>
                     <Text style={styles.price}>${item.price}</Text>
-                    <Text>Listed By {posterUsername}</Text>
-                    <Text>On {formatDate(item.created_at)}</Text>
+                    <Text style={styles.font}>Listed By {posterUsername}</Text>
+                    <Text style={styles.font}>On {formatDate(item.created_at)}</Text>
                     <Text style={styles.description}>Description</Text>
-                    <Text>{item.description}</Text>
+                    <Text style={styles.font}>{item.description}</Text>
                 </View>
                 <View style={{ marginVertical: 20 }}>
                 <Text style={{ fontWeight: 'bold', marginBottom: 8, justifyContent: 'center' }}>Available Dates</Text>
@@ -264,7 +265,7 @@ const ItemDetails = ({ route, navigation }) => {
                 confirmOption="Undo Accept"
                 selectedDate={selectedDate}
             />
-        </View>
+        </SafeAreaView>
     )
 }
 
@@ -311,18 +312,22 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 25,
         fontWeight: 'bold',
+        color: 'black'
     },
     price: {
         color: 'green'
     },
-
+    font: {
+        color: 'black',
+    },
     description: {
         fontSize: 20,
         fontWeight: 'bold',
+        color: 'black',
     },
 
     accept: {
-        height: '10%',
+        minHeight: '10%',
         backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',

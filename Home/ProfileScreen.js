@@ -1,6 +1,11 @@
 import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native'
 import React, { useLayoutEffect } from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import CustomButton from './components/CustomButton'
+import { useUser } from '../Home/globalContext/UserContext'
+import { supabase } from '../server/supabase.js'
+import { useNavigation } from '@react-navigation/native'
+import CompletedRequest from './profileTabs/CompletedListing.js'
 
 const ProfileScreen = ({ navigation }) => {
   const handleLogout = async () => {
@@ -30,8 +35,15 @@ const ProfileScreen = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Your Profile Screen</Text>
+    <View style={{ flex: 1, alignItems: 'center'}}>
+      <View>
+        <CustomButton
+          color={"green"}
+          text="View Completed Listings"
+          onPress={() => navigation.navigate('CompletedListing')}  
+        />
+      </View>
+      <Text></Text>
     </View>
   );
 

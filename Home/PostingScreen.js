@@ -12,6 +12,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import DateSelector from './components/DateSelector.js';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
 const PostingScreen = ({ route, navigation }) => {
@@ -235,9 +236,9 @@ const PostingScreen = ({ route, navigation }) => {
   ///////////////////////////Functions demarcation////////////////////////////////////
 
   return (
-    <ScrollView 
+    <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"  
+      extraScrollHeight={40} 
     >
       
       <Text style={styles.label}>
@@ -320,7 +321,7 @@ const PostingScreen = ({ route, navigation }) => {
         />
         
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 
   
