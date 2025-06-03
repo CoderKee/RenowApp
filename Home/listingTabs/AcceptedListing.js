@@ -36,6 +36,7 @@ const AcceptedListing = () => {
     .from('Listings')
     .select('*')
     .eq('accepted_by', username)
+    .eq('completed', false)
     .order('created_at', { ascending: false })
     .range(from, to);
 

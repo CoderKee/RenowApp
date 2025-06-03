@@ -33,17 +33,26 @@ const ProfileScreen = ({ navigation }) => {
       ),
     });
   }, [navigation]);
-
+  const username = useUser().username;
   return (
     <View style={{ flex: 1, alignItems: 'center'}}>
-      <View>
-        <CustomButton
-          color={"green"}
-          text="View Completed Listings"
-          onPress={() => navigation.navigate('CompletedListing')}  
+      <Text style={{ fontSize: 40, fontWeight: 'bold', marginVertical: 20, alignSelf: 'flex-start', marginLeft:'5%', color: 'black'
+       }}> Welcome, </Text>
+      <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', color: 'black' }}>
+        {username}</Text>
+      <CustomButton
+        color={"gray"}
+        text="Completed Listings"
+        onPress={() => navigation.navigate('CompletedListing')}  
+      />
+      <CustomButton
+        color={"gray"}
+        text="My Reviews"
+        onPress={() => null}  
         />
-      </View>
-      <Text></Text>
+      <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 50, alignSelf: 'center', color: 'black' }}>
+        Calendar</Text>
+      
     </View>
   );
 

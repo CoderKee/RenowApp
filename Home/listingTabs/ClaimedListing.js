@@ -37,6 +37,7 @@ const ClaimedListing = () => {
       .select('*, Users!inner(username)')
       .eq('Users.username', username)
       .eq('accepted', true)
+      .eq('completed', false)
       .order('created_at', { ascending: false })
       .range(from, to);
 

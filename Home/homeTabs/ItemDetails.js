@@ -4,7 +4,7 @@ import CustomButton from '../components/CustomButton';
 import { supabase } from '../../server/supabase';
 import { useUser } from '../globalContext/UserContext';
 import AlertModal from '../components/AlertModal';
-import { Icon } from 'react-native-vector-icons/MaterialIcons';
+import  Icon  from 'react-native-vector-icons/MaterialIcons';
 import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,6 +26,7 @@ const ItemDetails = ({ route, navigation }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [unacceptedModalVisible, setUnacceptedModalVisible] = useState(false);
+    const [confirmVisible, setConfirmVisible] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
 
@@ -44,7 +45,7 @@ const ItemDetails = ({ route, navigation }) => {
     }, [item.user_id]);
 
     useLayoutEffect(() => {
-        if (item.accepted && item.accepted_by) {
+        if (item.accepted && item.accepted_by && !item.completed) {
             navigation.setOptions({ 
                 headerRight: () => (
                     <TouchableOpacity
@@ -79,9 +80,11 @@ const ItemDetails = ({ route, navigation }) => {
     }, [fetchPosterUserName]);
 
     const styleColour = item.request 
-                        ? item.accepted || posterUsername === username || selectedDate === null
+                        ? item.accepted && posterUsername === username ? 'maroon'
+                        : item.accepted || posterUsername === username || selectedDate === null
                             ? '#997570'
                             : 'maroon'
+                        : item.accepted && posterUsername === username ? '#001B5B'
                         : item.accepted || posterUsername === username || selectedDate === null 
                             ? '#7393B3'
                             : '#001B5B';
@@ -95,8 +98,30 @@ const ItemDetails = ({ route, navigation }) => {
     const unAcceptTask = () => {
         setUnacceptedModalVisible(true);
     };
+    
+    //Change 'Write a Review' to review.written ? 'Review Written' : 'Write a Review'
+    const textReturn = () => {
+        return item.completed ? ('Write a Review') : (item.accepted ? (posterUsername === username
+            ? "Mark as completed"
+            : "Accepted" )
+            : (selectedDate === null ? "Please Select Date" : 'Accept'));
+        /*
+                posterUsername === username ? "Cannot Accept Your Own Listing"
+                                                    : item.accepted ? "Accepted" 
+                                                        : selectedDate === null ?  "Please Select Date" : "Accept"
+                                                        */
+    }
 
-    function formatDate(timeStamp) {
+    const handleComplete = () => {
+        setConfirmVisible(true);
+    }
+
+    const handleReview = () => {
+    }
+
+    const completion = item.completed;
+    
+   function formatDate(timeStamp) {
         const date = new Date(timeStamp);
         return date.toLocaleDateString('en-GB', dateFormat);
     }
@@ -107,8 +132,9 @@ const ItemDetails = ({ route, navigation }) => {
         setCurrentIndex(index);
     };
 
+    const accepted = item.accepted;
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* Image scroll might be buggy */}
             <ScrollView 
                 contentContainerStyle={styles.contentContainer}
@@ -120,85 +146,134 @@ const ItemDetails = ({ route, navigation }) => {
                     />
                 }
             >
-                <View style={styles.imageContainer}>
-                    {item.images && item.images.length > 0 ? (
-                        <>
-                        <ScrollView
-                            horizontal
-                            pagingEnabled
-                            snapToInterval={370} 
-                            snapToAlignment="center"
-                            decelerationRate="fast"
-                            showsHorizontalScrollIndicator={false}
-                            style={styles.carouselContainer}
-                            onScroll={onScroll}
-                            scrollEventThrottle={16}
-                        >
-                            {item.images.map((imgName, index) => {
-                                const { data, error } = supabase.storage
-                                    .from('images')
-                                    .getPublicUrl(imgName);
+                {!completion && (
+                    <>
+                        {accepted && (
+                            <Text style={{ textAlign: 'flex-start', fontSize: 18, color: 'black', fontWeight: 'bold' }}>
+                                This listing has been accepted by {item.accepted_by}
+                            </Text>
+                        )}
 
-                                return (
-                                    <Image
-                                        key={index}
-                                        source={{ uri: data.publicUrl }}
-                                        style={styles.carouselImage}
-                                    />
-                                );
-                            })}
-                        </ScrollView>
-                        {/* pagination dots */}
-                        <View style={styles.pagination}>
-                            {item.images.map((_, index) => (
-                                <View 
-                                    key={index} 
-                                    style={[
-                                        styles.dot, 
-                                        currentIndex === index ? styles.activeDot : null
-                                    ]} 
+                        <View style={styles.imageContainer}>
+                            {item.images && item.images.length > 0 ? (
+                                <>
+                                    <ScrollView
+                                        horizontal
+                                        pagingEnabled
+                                        snapToInterval={370}
+                                        snapToAlignment="center"
+                                        decelerationRate="fast"
+                                        showsHorizontalScrollIndicator={false}
+                                        style={styles.carouselContainer}
+                                        onScroll={onScroll}
+                                        scrollEventThrottle={16}
+                                    >
+                                        {item.images.map((imgName, index) => {
+                                            const { data, error } = supabase.storage
+                                                .from('images')
+                                                .getPublicUrl(imgName);
+
+                                            return (
+                                                <Image
+                                                    key={index}
+                                                    source={{ uri: data.publicUrl }}
+                                                    style={styles.carouselImage}
+                                                />
+                                            );
+                                        })}
+                                    </ScrollView>
+
+                                    <View style={styles.pagination}>
+                                        {item.images.map((_, index) => (
+                                            <View
+                                                key={index}
+                                                style={[
+                                                    styles.dot,
+                                                    currentIndex === index ? styles.activeDot : null,
+                                                ]}
+                                            />
+                                        ))}
+                                    </View>
+                                </>
+                            ) : (
+                                <Image
+                                    source={require('../../assets/image.png')}
+                                    style={styles.carouselImage}
                                 />
-                            ))}
+                            )}
                         </View>
-                        </>
-                    ) : (
-                        <Image
-                            source={require('../../assets/image.png')}
-                            style={styles.carouselImage}
-                        />
-                    )}
-                </View>
-                <View style={styles.descriptionContainer}>
-                    <Text style={styles.title}>{item.title.toUpperCase()}</Text>
-                    <Text style={styles.price}>${item.price}</Text>
-                    <Text style={styles.font}>Listed By {posterUsername}</Text>
-                    <Text style={styles.font}>On {formatDate(item.created_at)}</Text>
-                    <Text style={styles.description}>Description</Text>
-                    <Text style={styles.font}>{item.description}</Text>
-                </View>
-                <View style={{ marginVertical: 20 }}>
-                <Text style={{ fontWeight: 'bold', marginBottom: 8, justifyContent: 'center' }}>Available Dates</Text>
-                    <Calendar
-                        availableDates={availableDates}
-                        selectedDate={selectedDate}
-                        onSelectDate={setSelectedDate}
-                    />
-                    {selectedDate && (
-                        <Text style={{ marginTop: 10, color: '#4A90E2' }}>
-                            Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
+
+                        <View style={styles.descriptionContainer}>
+                            <Text style={styles.title}>{item.title}</Text>
+                            <Text style={styles.price}>${item.price}</Text>
+                            <Text style={styles.font}>Listed By {posterUsername}</Text>
+                            <Text style={styles.font}>On {formatDate(item.created_at)}</Text>
+                            <Text style={styles.description}>Description</Text>
+                            <Text style={styles.font}>{item.description}</Text>
+                        </View>
+
+                        <View style={{ marginVertical: 20 }}>
+                            <Text style={{ fontWeight: 'bold', marginBottom: 8, justifyContent: 'center' }}>
+                                Available Dates
+                            </Text>
+                            <Calendar
+                                availableDates={availableDates}
+                                selectedDate={selectedDate}
+                                onSelectDate={setSelectedDate}
+                            />
+                            {selectedDate && (
+                                <Text style={{ marginTop: 10, color: '#4A90E2' }}>
+                                    Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
+                                </Text>
+                            )}
+                        </View>
+                    </>
+                )}
+                {completion && (
+                    <View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 30 }}>
+                            <Image 
+                                source={require("../../assets/Renow.png")} 
+                                style={{ width: 100, height: 100}}
+                                resizeMode='contain'
+                            />
+                            <Text style={{ flex: 1, textAlign: 'left', fontSize: 28, color: 'black', fontWeight: 'bold', marginLeft: 10 }}>
+                                Proof of Completion
+                            </Text>
+                        </View>
+                        <Text style={{ textAlign: 'flex-start', fontSize: 20, color: 'black', fontWeight: 'bold', marginVertical: 20 }}>Listing title: {item.title}</Text>
+                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>Price: ${item.price}</Text>
+                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginTop: 10}}>Listing description:</Text>
+                        <View style={{
+                            height: 300,
+                            alignContent: 'center',
+                            borderWidth: 1,
+                            borderRadius: 10,
+                            borderColor: 'gray',
+                            paddingHorizontal: 10,
+                            paddingVertical: 10,
+                        }}>
+                        <Text style={styles.font}>{item.description}</Text>
+                        </View>
+                        
+                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>Service received by: {item.request ? posterUsername : item.accepted_by}</Text>
+                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>Service provided by: {item.request ? item.accepted_by : posterUsername}</Text>
+                        
+                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>
+                            Completed on {formatDate(item.completed_on)}
                         </Text>
-                    )}
-                </View>
+                    </View>
+                )}
             </ScrollView>
-            
+                
             <View style={styles.accept}>
                 <CustomButton 
-                    text={ posterUsername === username ? "Cannot Accept Your Own Listing"
-                                                    : item.accepted ? "Accepted" 
-                                                        : selectedDate === null ?  "Please Select Date" : "Accept"
-                        }
+                    text={textReturn()}
                     color={ styleColour }
-                    onPress={ item.accepted || selectedDate === null || posterUsername === username ? null : acceptTask }
+                    onPress={ (
+                        item.completed ? handleReview : item.accepted && posterUsername === username ? handleComplete
+                        : item.accepted || selectedDate === null || posterUsername === username ? null : acceptTask) 
+                    }
                 />
             </View>
             <AlertModal
@@ -265,7 +340,41 @@ const ItemDetails = ({ route, navigation }) => {
                 confirmOption="Undo Accept"
                 selectedDate={selectedDate}
             />
-        </SafeAreaView>
+            <AlertModal
+                visible={confirmVisible}
+                onCancel={() => setConfirmVisible(false)}
+                onConfirm={async () => {
+                    try {
+                        const {data, error} = await supabase
+                            .from("Listings")
+                            .update({ completed: true, completed_on: new Date() })
+                            .eq("listing_id", item.listing_id)
+
+                        if (error) {
+                            Alert.alert("Error", error.message);
+                        } else {
+                            Alert.alert("Success", "Task is marked as completed.",
+                                [
+                                    {
+                                        text: "OK",
+                                        onPress: () => {
+                                            navigation.navigate("CompletedListing");
+                                        }
+                                    }
+                                ]
+                            );
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        Alert.alert("Error", "An unexpected error has occurred.");
+                    } finally {
+                        setConfirmVisible(false);
+                    }
+                }}
+                alertText="Are you sure you want to mark as completed?"
+                confirmOption="Confirm"
+            />
+        </View>
     )
 }
 

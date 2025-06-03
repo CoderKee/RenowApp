@@ -41,6 +41,7 @@ const MyListing = () => {
       .select('*, Users!inner(username)')
       .eq('Users.username', username)
       .eq('accepted', false)
+      .eq('completed', false)
       .order('created_at', { ascending: false })
       .range(from, to);
 

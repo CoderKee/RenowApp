@@ -32,6 +32,7 @@ const HomeRequest = () => {
       .select('*')
       .eq('request', true)
       .eq('accepted', false)
+      .eq('completed', false)
       .order('created_at', { ascending: false })
       .range(from, to);
 
