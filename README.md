@@ -36,6 +36,7 @@ The Renow app will be equipped with a myriad of features that helps to smoothen 
 - Type matching capability
 - Price matching capablity
 - Search function
+- Peer-to-Peer Messaging feature (with the help of God)
 
 **These set of features are tentative**
 
