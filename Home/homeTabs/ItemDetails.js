@@ -8,6 +8,7 @@ import  Icon  from 'react-native-vector-icons/MaterialIcons';
 import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ItemReceipt from '../profileTabs/ItemReceipt';
 import { 
     ScrollView, 
     StyleSheet, 
@@ -101,16 +102,13 @@ const ItemDetails = ({ route, navigation }) => {
     
     //Change 'Write a Review' to review.written ? 'Review Written' : 'Write a Review'
     const textReturn = () => {
-        return item.completed ? ('Write a Review') : (item.accepted ? (posterUsername === username
-            ? "Mark as completed"
-            : "Accepted" )
-            : (selectedDate === null ? "Please Select Date" : 'Accept'));
-        /*
-                posterUsername === username ? "Cannot Accept Your Own Listing"
-                                                    : item.accepted ? "Accepted" 
-                                                        : selectedDate === null ?  "Please Select Date" : "Accept"
-                                                        */
-    }
+        if (item.accepted) {
+            return posterUsername === username ? "Mark as completed" : "Accepted";
+        }
+        if (posterUsername === username) return "Cannot accept your own listing";
+        if (item.completed) return "Write a Review";
+        return selectedDate === null ? "Please Select Date" : "Accept";
+    };
 
     const handleComplete = () => {
         setConfirmVisible(true);
@@ -121,7 +119,7 @@ const ItemDetails = ({ route, navigation }) => {
 
     const completion = item.completed;
     
-   function formatDate(timeStamp) {
+    function formatDate(timeStamp) {
         const date = new Date(timeStamp);
         return date.toLocaleDateString('en-GB', dateFormat);
     }
@@ -134,7 +132,7 @@ const ItemDetails = ({ route, navigation }) => {
 
     const accepted = item.accepted;
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* Image scroll might be buggy */}
             <ScrollView 
                 contentContainerStyle={styles.contentContainer}
@@ -217,13 +215,30 @@ const ItemDetails = ({ route, navigation }) => {
                                 Available Dates
                             </Text>
                             <Calendar
-                                availableDates={availableDates}
-                                selectedDate={selectedDate}
-                                onSelectDate={setSelectedDate}
+                                availableDates={
+                                item.accepted && item.selected_date
+                                    ? [item.selected_date] // Only highlight the accepted date
+                                    : availableDates
+                                }
+                                selectedDate={
+                                item.accepted && item.selected_date
+                                    ? item.selected_date
+                                    : selectedDate
+                                }
+                                onSelectDate={
+                                item.accepted
+                                    ? () => {} // Disable selection if accepted
+                                    : setSelectedDate
+                                }
                             />
-                            {selectedDate && (
+                            {item.accepted && item.selected_date && (
                                 <Text style={{ marginTop: 10, color: '#4A90E2' }}>
-                                    Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
+                                Selected: {dayjs(item.selected_date).format('dddd, D MMMM YYYY')}
+                                </Text>
+                            )}
+                            {!item.accepted && selectedDate && (
+                                <Text style={{ marginTop: 10, color: '#4A90E2' }}>
+                                Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
                                 </Text>
                             )}
                         </View>
@@ -374,7 +389,7 @@ const ItemDetails = ({ route, navigation }) => {
                 alertText="Are you sure you want to mark as completed?"
                 confirmOption="Confirm"
             />
-        </View>
+        </SafeAreaView>
     )
 }
 

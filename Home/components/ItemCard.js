@@ -70,7 +70,7 @@ const ItemCard = ({ item }) => {
             style={styles.button}
           >
           <CustomButton 
-            text="View" 
+            text={item.completed?"View Receipt" : "View"} 
             color={headerColour}
             onPress={viewDetail}
           />
