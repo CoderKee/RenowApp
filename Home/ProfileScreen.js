@@ -3,10 +3,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomButton from './components/CustomButton';
 import { useUser } from '../Home/globalContext/UserContext';
 import { supabase } from '../server/supabase.js';
-import Calendar from './components/Calendar.js';
 import ProfileCalendar from './profileTabs/ProfileCalendar';
 import { useFocusEffect } from '@react-navigation/native';
 import dayjs from 'dayjs';
+import ReviewDisplay from './components/ReviewDisplay.js';
 import { 
   StyleSheet, 
   Text, 
@@ -28,6 +28,7 @@ const ProfileScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [tasksByDate, setTasksByDate] = useState({});
   const [tasksForSelectedDate, setTasksForSelectedDate] = useState([]);
+  const [review, setReview] = useState(false);
   const { username } = useUser();
 
   const fetchCalendarEvents = useCallback(async () => {
@@ -157,7 +158,7 @@ const ProfileScreen = ({ navigation }) => {
       <CustomButton
         color={"gray"}
         text="My Reviews"
-        onPress={() => null}  
+        onPress={() => setReview(true)}  
         />
       <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 50, alignSelf: 'center', color: 'black' }}>
         Calendar</Text>
@@ -198,7 +199,11 @@ const ProfileScreen = ({ navigation }) => {
         </>
       )}
     </View>
-      
+    <ReviewDisplay
+      visible={review}
+      onClose={() => setReview(false)}
+      user={username}
+    />
     </ScrollView>
   );
 
