@@ -4,6 +4,7 @@ import MainTabs from "./MainTabs";
 import ItemDetails from "./homeTabs/ItemDetails";
 import EditScreen from "./components/EditScreen";
 import Completed from "./profileTabs/CompletedListing";
+import ItemReceipt from "./profileTabs/ItemReceipt";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,11 @@ const RootNavigator = ({ route }) => {
                     name="CompletedListing"
                     component={Completed}
                     options={{ title: 'Completed Listing' }}
+                />
+                <Stack.Screen
+                    name="ItemReceipt"
+                    component={ItemReceipt}
+                    options={{ title: 'Receipt' }}
                 />
             </Stack.Navigator>
         
