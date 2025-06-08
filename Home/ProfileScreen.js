@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState, useCallback, useEffect, use } from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import CustomButton from './components/CustomButton';
+import UIButton from './components/UIButton';
 import { useUser } from '../Home/globalContext/UserContext';
 import { supabase } from '../server/supabase.js';
 import ProfileCalendar from './profileTabs/ProfileCalendar';
@@ -150,13 +150,15 @@ const ProfileScreen = ({ navigation }) => {
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginVertical: 20, alignSelf: 'flex-start', marginLeft:'5%', color: 'black'
        }}> Welcome, {username} </Text>
       
-      <CustomButton
-        color={"gray"}
+      <UIButton
+        icon={"list"}
+        color={"black"}
         text="Completed Listings"
         onPress={() => navigation.navigate('CompletedListing')}  
       />
-      <CustomButton
-        color={"gray"}
+      <UIButton
+        icon = {"rate-review"}
+        color={"black"}
         text="My Reviews"
         onPress={() => setReview(true)}  
         />
