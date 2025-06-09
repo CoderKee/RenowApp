@@ -29,6 +29,7 @@ The Renow app will be equipped with a myriad of features that helps to smoothen 
 - Allowing home service providers to upload the services that they offer
 - Enabling the modification and deletion of posting
 - Enabling image uploads for providers to assess the issue readily
+- A proof of completion will be generated for completed listing in the event of disputes.
 - Allowing users to schedule their meeting
 - A personal calendar for users to track their schedule
 - Allowing users to write reviews their experience
@@ -36,7 +37,7 @@ The Renow app will be equipped with a myriad of features that helps to smoothen 
 - Type matching capability
 - Price matching capablity
 - Search function
-- Peer-to-Peer Messaging feature (with the help of God)
+
 
 **These set of features are tentative**
 
