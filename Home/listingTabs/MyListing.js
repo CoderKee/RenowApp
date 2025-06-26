@@ -41,6 +41,7 @@ const MyListing = () => {
       .select('*, Users!inner(username)')
       .eq('Users.username', username)
       .eq('accepted', false)
+      .eq('completed', false)
       .order('created_at', { ascending: false })
       .range(from, to);
 
@@ -50,7 +51,11 @@ const MyListing = () => {
       if (reset) {
         setItems(data);
       } else {
-        setItems((prevItems) => [...prevItems, ...data]);
+        if (pageNumber === 0) { //check pageNumber === 0 to prevent duplicates from appending
+        setItems(data); 
+        } else {
+        setItems((prevItems) => [...prevItems, ...data]); 
+      }
       }
       setNoData(data.length === 0 && pageNumber === 0);
       setNoMoreData(data.length < PAGE_SIZE);

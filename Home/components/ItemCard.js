@@ -1,6 +1,7 @@
 import React from "react";
 import CustomButton from "./CustomButton";
 import { useNavigation } from "@react-navigation/native";
+import { supabase } from "../../server/supabase";
 import { 
   View, 
   Text, 
@@ -17,6 +18,11 @@ const ItemCard = ({ item }) => {
 
   const headerColour = item.request ? 'maroon' : '#001B5B';
 
+  const { data, error } = supabase
+  .storage
+  .from('images')
+  .getPublicUrl(item.images[0]);
+
   return (
     <View style={styles.itemContainer}>
       <View style={[styles.header, { backgroundColor: headerColour }]}>
@@ -32,11 +38,17 @@ const ItemCard = ({ item }) => {
         <View
           style={styles.imageContainer}
         > 
-          <Image
-            // replace this pathing when we have actual images
-            source={ require('../../assets/image.png') }
-            style={styles.image}
-          />
+          {item.images.length > 0 ? (
+            <Image
+              source={{ uri: data.publicUrl }} // Display the first image
+              style={styles.image}
+            />
+          ) : (
+            <Image
+              source={require('../../assets/image.png')} // Default image if no image uploaded
+              style={styles.image}
+            />
+          )}
         </View>
         <View
          style={styles.descriptionContainer}
@@ -58,7 +70,7 @@ const ItemCard = ({ item }) => {
             style={styles.button}
           >
           <CustomButton 
-            text="View" 
+            text={item.completed?"View Receipt" : "View"} 
             color={headerColour}
             onPress={viewDetail}
           />
@@ -101,13 +113,14 @@ const styles = StyleSheet.create({
   title: {
     paddingHorizontal:5,
     fontSize: 25,
-    color: 'black'
+    color:'black'
   },
   price: {
     paddingHorizontal: 5,
     color: "green"
   },
   image: {
+    flex: 1,
     resizeMode: "contain",
     width: '100%',
     height: 100,
@@ -116,7 +129,7 @@ const styles = StyleSheet.create({
   description: {
     padding: 5,
     fontSize: 16,
-    color: 'black'
+    color: 'black',
   },
   details: {
     

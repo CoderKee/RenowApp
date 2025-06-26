@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MainTabs from "./MainTabs";
 import ItemDetails from "./homeTabs/ItemDetails";
 import EditScreen from "./components/EditScreen";
+import Completed from "./profileTabs/CompletedListing";
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,11 @@ const RootNavigator = ({ route }) => {
                     name="EditScreen"
                     component={EditScreen}
                     options={{ title: 'Edit Listing' }}
+                />
+                <Stack.Screen
+                    name="CompletedListing"
+                    component={Completed}
+                    options={{ title: 'Completed Listing' }}
                 />
             </Stack.Navigator>
         

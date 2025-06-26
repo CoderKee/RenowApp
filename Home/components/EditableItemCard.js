@@ -24,6 +24,8 @@ const ItemCard = ({ item, onDelete }) => {
 
   const handleDelete = async () => {
 
+    const { error: imgError } = await supabase.storage.from('images').remove(item.images);
+
     const { data, error } = await supabase
       .from('Listings')
       .delete()
@@ -42,6 +44,11 @@ const ItemCard = ({ item, onDelete }) => {
     navigation.navigate('ItemDetails', { item });
   }
 
+  const { data, error } = supabase
+    .storage
+    .from('images')
+    .getPublicUrl(item.images[0]);
+
   return (
     <View style={styles.itemContainer}>
       <View style={[styles.header, { backgroundColor: headerColour }]}>
@@ -59,11 +66,20 @@ const ItemCard = ({ item, onDelete }) => {
       </View>
 
       <View style={styles.lowerContainer}>
-        <View style={styles.imageContainer}> 
-          <Image
-            source={ require('../../assets/image.png') }
-            style={styles.image}
-          />
+        <View
+          style={styles.imageContainer}
+        > 
+          {item.images.length > 0 ? (
+            <Image
+              source={{ uri: data.publicUrl }} // Display the first image
+              style={styles.image}
+            />
+          ) : (
+            <Image
+              source={require('../../assets/image.png')} // Default image if no image uploaded
+              style={styles.image}
+            />
+          )}
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.details}>
@@ -126,13 +142,18 @@ const styles = StyleSheet.create({
   title: {
     paddingHorizontal:5,
     fontSize: 25,
+<<<<<<< PersonalCalendar
+    color:'black'
+=======
     color: 'black',
+>>>>>>> main
   },
   price: {
     paddingHorizontal: 5,
     color: "green"
   },
   image: {
+    flex: 1,
     resizeMode: "contain",
     width: '100%',
     height: 100,
@@ -141,7 +162,11 @@ const styles = StyleSheet.create({
   description: {
     padding: 5,
     fontSize: 16,
+<<<<<<< PersonalCalendar
+    color: 'black',
+=======
     color: 'black'
+>>>>>>> main
   },
   details: {
     justifyContent: 'center'

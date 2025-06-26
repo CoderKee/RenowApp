@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import ItemCard from '../components/ItemCard';
+import { useUser } from '../globalContext/UserContext';
+import { supabase } from '../../server/supabase';
+import { useFocusEffect } from '@react-navigation/native';
 import { 
   StyleSheet, 
   Text, 
@@ -9,32 +11,33 @@ import {
   ActivityIndicator, 
   FlatList 
 } from 'react-native';
-import { supabase } from '../../server/supabase';
+
 
 const PAGE_SIZE = 5;
 
-const HomeRequest = () => {
+const AcceptedListing = () => {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [noMoreData, setNoMoreData] = useState(false);
+  const [noData, setNoData] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const { username } = useUser();
+
   const fetchItems = async (pageNumber) => {
-    if (loading || noMoreData) return;
-    setLoading(true);
+  if (loading || noMoreData) return;
+  setLoading(true);
 
-    const from = pageNumber * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
+  const from = pageNumber * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
-    const { data, error } = await supabase
-      .from('Listings')
-      .select('*')
-      .eq('request', true)
-      .eq('accepted', false)
-      .eq('completed', false)
-      .order('created_at', { ascending: false })
-      .range(from, to);
+  const { data, error } = await supabase
+    .from('Listings')
+    .select('*')
+    .eq('completed', true)
+    .order('completed_on', { ascending: false })
+    .range(from, to);
 
     if (error) {
       console.error('Error fetching items:', error);
@@ -42,7 +45,12 @@ const HomeRequest = () => {
       if (data.length < PAGE_SIZE) {
         setNoMoreData(true);
       }
-      setItems((prevItems) => [...prevItems, ...data]);
+      if (pageNumber === 0) {
+        setItems(data); 
+      } else {
+        setItems((prevItems) => [...prevItems, ...data]); 
+      }
+      setNoData(data.length === 0 && pageNumber === 0);
       setPage(pageNumber + 1);
     }
     setLoading(false);
@@ -65,8 +73,9 @@ const HomeRequest = () => {
     setItems([]);
     await fetchItems(0);
     setRefreshing(false);
-  }, []);
+  }, [username]);
 
+  // auto refresh
   useFocusEffect(
     useCallback(() => {
       handleRefresh();
@@ -77,24 +86,28 @@ const HomeRequest = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={items}
-        renderItem={renderItem}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loading ? (
-            <ActivityIndicator size="large" style={styles.loader} />
-          ) : null
-        }
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-      />
+      {noData && <Text style={styles.text}>No completed listings</Text>}
+      {!noData && 
+        <FlatList
+          data={items}
+          renderItem={renderItem}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            loading ? (
+              <ActivityIndicator size="large" style={styles.loader} />
+            ) : null
+          }
+          // manual refresh when user pulls down the list
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+        />
+      }
     </SafeAreaView>
   );
 }
 
-export default HomeRequest
+export default AcceptedListing;
 
 const styles = StyleSheet.create({
     container: {
@@ -121,4 +134,9 @@ const styles = StyleSheet.create({
   loader: {
     marginVertical: 20,
   },
+  text: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    alignSelf: 'center'
+  }
 })
