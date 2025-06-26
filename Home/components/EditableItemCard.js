@@ -142,11 +142,7 @@ const styles = StyleSheet.create({
   title: {
     paddingHorizontal:5,
     fontSize: 25,
-<<<<<<< PersonalCalendar
     color:'black'
-=======
-    color: 'black',
->>>>>>> main
   },
   price: {
     paddingHorizontal: 5,
@@ -162,11 +158,7 @@ const styles = StyleSheet.create({
   description: {
     padding: 5,
     fontSize: 16,
-<<<<<<< PersonalCalendar
     color: 'black',
-=======
-    color: 'black'
->>>>>>> main
   },
   details: {
     justifyContent: 'center'

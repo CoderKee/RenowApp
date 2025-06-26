@@ -7,7 +7,7 @@ import AlertModal from '../components/AlertModal';
 import  Icon  from 'react-native-vector-icons/MaterialIcons';
 import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import ItemReceipt from '../profileTabs/ItemReceipt';
 
 import { 
@@ -56,7 +56,7 @@ const ItemDetails = ({ route, navigation }) => {
                         style={{ marginRight: 15 }}
                         onPress={unAcceptTask}
                     >
-                        <MaterialIcons name="cancel" size={30} color='maroon'/> 
+                        <Icon name="cancel" size={30} color='maroon'/> 
                     </TouchableOpacity>
                 )
             });

@@ -197,8 +197,9 @@ const ProfileScreen = ({ navigation }) => {
           )}
         </>
       )}
-      
+      </View>
     </ScrollView>
+    
   );
 
 }
