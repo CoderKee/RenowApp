@@ -150,12 +150,12 @@ const ProfileScreen = ({ navigation }) => {
        }}> Welcome, {username} </Text>
       
       <CustomButton
-        color={"gray"}
+        color={"black"}
         text="Completed Listings"
         onPress={() => navigation.navigate('CompletedListing')}  
       />
       <CustomButton
-        color={"gray"}
+        color={"black"}
         text="My Reviews"
         onPress={() => null}  
         />
