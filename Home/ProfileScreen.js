@@ -197,7 +197,6 @@ const ProfileScreen = ({ navigation }) => {
           )}
         </>
       )}
-    </View>
       
     </ScrollView>
   );
@@ -206,4 +205,8 @@ const ProfileScreen = ({ navigation }) => {
 
 export default ProfileScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  text: {
+    color: 'black',
+  }
+})

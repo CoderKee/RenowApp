@@ -9,6 +9,7 @@ import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ItemReceipt from '../profileTabs/ItemReceipt';
+
 import { 
     ScrollView, 
     StyleSheet, 
@@ -30,6 +31,8 @@ const ItemDetails = ({ route, navigation }) => {
     const [confirmVisible, setConfirmVisible] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
+
+    const insets = useSafeAreaInsets();
 
     const fetchPosterUserName = useCallback(async () => {
         if (!item.user_id) return;
@@ -53,7 +56,7 @@ const ItemDetails = ({ route, navigation }) => {
                         style={{ marginRight: 15 }}
                         onPress={unAcceptTask}
                     >
-                        <Icon name="cancel" size={30} color='maroon'/> 
+                        <MaterialIcons name="cancel" size={30} color='maroon'/> 
                     </TouchableOpacity>
                 )
             });
@@ -432,11 +435,13 @@ const styles = StyleSheet.create({
         flex: 4, 
         padding: 10,
     },
-
+    font: {
+        color: 'black',
+    },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
-        color: 'black'
+        color: 'black',
     },
     price: {
         color: 'green'

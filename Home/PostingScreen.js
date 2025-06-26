@@ -5,7 +5,11 @@ import CustomDescriptionInput from './components/CustomDescriptionInput';
 import CustomTitleInput from './components/CustomTitleInput';
 import CustomPriceInput from './components/CustomPriceInput';
 import CustomButton from './components/CustomButton';
+<<<<<<< PersonalCalendar
 import LoadingScreen from './components/LoadingScreen.js';
+=======
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+>>>>>>> main
 import { supabase } from '../server/supabase.js';
 import { useUser } from './globalContext/UserContext.js';
 import * as ImagePicker from 'expo-image-picker';
@@ -236,6 +240,7 @@ const PostingScreen = ({ route, navigation }) => {
   ///////////////////////////Functions demarcation////////////////////////////////////
 
   return (
+<<<<<<< PersonalCalendar
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
       extraScrollHeight={40} 
@@ -245,6 +250,14 @@ const PostingScreen = ({ route, navigation }) => {
         Upload Images <Text style={{ fontWeight: 'normal', color: '#666' }}>({images.length}/3)</Text>
       </Text>
       
+=======
+    <KeyboardAwareScrollView 
+      contentContainerStyle={styles.container}
+      enableOnAndroid={true}
+      extraScrollHeight={20}
+    >
+      <Text style={styles.label}>Upload Images</Text>
+>>>>>>> main
       <FlatList
         horizontal
         data={images}

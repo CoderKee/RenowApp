@@ -9,7 +9,10 @@ import {
   Text,
   Button,
   TouchableOpacity,
+<<<<<<< PersonalCalendar
  
+=======
+>>>>>>> main
 } from "react-native";
 import CustomInput from "./components/CustomInput";
 import CustomButton from './components/CustomButton';
@@ -137,10 +140,17 @@ export default function Testing({ navigation }) {
       }
 
     return (
+<<<<<<< PersonalCalendar
     <KeyboardAwareScrollView
       enableOnAndroid={true}
       extraScrollHeight={40} 
     >
+=======
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        extraScrollHeight={30}
+      >
+>>>>>>> main
         <View style={styles.container}>
 
           <Image 
