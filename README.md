@@ -156,6 +156,10 @@ Upon filling the text inputs, users should click on the **Sign Up** button.
 
 After successfully filling in all 3 text fields users will be redirected to a **Log in** screen
 
+The interface of the sign up screen is shown below for user reference:
+
+![Sign Up Screen](READMEimages/SignupPage.png)
+
 ## Developers' note
 
 Currently, the username and password will be passed into 'Users' table in Supabase, for this project, we are not using Supabase's authentication system.  
@@ -178,6 +182,10 @@ Users should fill in both text inputs with the corresponding username and passwo
 
 After successfully filling in the text inputs, users should click on the **Log in** button which will direct users to the **Home** tab
 
+The interface of the log in screen is shown below for user reference:
+
+![Log In Screen](READMEimages/LoginPage.png)
+
 ---
 # Main tabs of Renow
 
@@ -187,6 +195,11 @@ There is a total of 4 main tabs in Renow
 - Listing
 - Create Listing
 - Profile
+
+Users should be able to see the available options at the bottom of their screen.
+
+The interface for the main tabs is shown for user reference:
+![Main tabs](READMEimages/AllTabs.png)
 
 # Home
 
@@ -237,15 +250,19 @@ An Item Card contains the following:
 If the user wishes to view the Listing, they may click on the **View** button to bring them to the detailed view, which is a page on top of the **Home** screen
 
 In the detailed view, the user may see the previously mentioned information with an addition of:
-- All images uploaded by the poster (to be implemented)
+- An image carousel that contains images uploaded by the poster
 - Detailed Description
-- A calendar for the user to choose a date (to be implemented)
+- A calendar for the user to choose a date
 - An accept button
 
 Any user can click on the accept button to accepted any Listing(except their own), after which they will be prompted to confirm their decision through a modal.
 Upon confirmation of acceptance, to user will be brought to their **Accepted Listing** Screen.
 
 If the user views their own Listing in detail, the accept button is greyed out an clicking it will do nothing.
+
+The interface for Item Details is shown below for user reference:
+
+![Item Details](READMEimages/ItemDetails.png)
 
 ## Error handling
 
@@ -349,7 +366,7 @@ The **Edit Listing** screen enables users to edit their posting. It supports:
 - Editing the service type  
 - Editing the price  
 - Editing the post type (Request or Service)
-- Editing image uploads (to be implemented)
+- Editing image uploads
 - Editing the selection of available dates (to be implemented, cannot be seen currently)
 - Updating listings in the Supabase backend
 
@@ -358,7 +375,7 @@ The **Edit Listing** screen enables users to edit their posting. It supports:
 Users should see a total of 7 components.
 
 **Components:**  
-1. Upload images  (Currently serves no purpose, to be implemented)
+1. Upload image
 2. Enter a title  
 3. Write a description  
 4. Select a service type  
@@ -367,7 +384,7 @@ Users should see a total of 7 components.
 7. Choose to post as a “Request” or “Service”  
 8. Update the listing  
 
-Note that the components displayed ere are similar to the one in "Create listing" screen, however the componenet should be pre-filled with the user's pre-filled posting information.
+Note that the components displayed here are similar to the one in "Create listing" screen, however the componenet should be pre-filled with the user's pre-filled posting information.
 
 Similarly, all text fields must be filled or an error message will be shown.
 
@@ -406,7 +423,8 @@ When the user presses the **Post** button:
   - `price`  (text)
   - `type` (text)  
   - `request` (true/false based on Post Type)  
-  - `created_at` (timestamp)  
+  - `created_at` (timestamp)
+  - `images` (text array)
 
 - **Step 4:**    
   - It updates the record on the Listing table.
@@ -420,6 +438,8 @@ When the user presses the **Post** button:
 ### Purpose
 
 The **Accepted Listing** tab allows users to view all listings they have accepted within the RenowApp marketplace. This helps users keep track of the jobs or requests they have committed to, ensuring efficient management of their accepted tasks.
+
+Accepted Listings will disappear from global marketplace.
 
 ### Features
 
@@ -462,7 +482,9 @@ The main implementation can be found in [`Home/listingTabs/AcceptedListing.js`](
 
 ### Purpose
 
-The **Claimed Listing** tab displays all listings that the current user has claimed within RenowApp. This feature helps users manage and track the jobs or requests they have taken responsibility for, ensuring they can easily access and review their claimed tasks.
+The **Claimed Listing** tab displays all listings created by the user, which is claimed by others, within RenowApp. This feature helps users manage and track the jobs or requests they have taken responsibility for, ensuring they can easily access and review their claimed tasks.
+
+Claimed listings will disappear from global marketplace.
 
 ### Features
 
@@ -501,6 +523,14 @@ const { data, error } = await supabase
 
 The main implementation can be found in [`Home/listingTabs/ClaimedListing.js`](Home/listingTabs/ClaimedListing.js).
 
+### Marking as completed
+
+The author of the listing will have the ability to mark the posting as **Completed**
+
+On the Claimed Listing tab, users can click "View Details" and the button displayed below will show "Mark as Completed"
+
+Upon clicking the "Mark as Completed" button, users will be redirected to the **Completed Listings** tab.
+
 # Create Listing
 
 The **Create Listing** feature in ReNow allows users to create and post new home service listings, which may include repairs, renovations, installations, and cleaning services. This section walks through:
@@ -513,6 +543,10 @@ The **Create Listing** feature in ReNow allows users to create and post new home
 
 
 Developers' note: **Create Listing** 's file is located in PostingScreen.js
+
+
+The interface for the Create Listing Tab will be shown below for user reference:
+![Create Listing](READMEimages/CreateListingTab.png)
 
 ## Purpose and Key Features
 
@@ -531,7 +565,7 @@ The **Create Listing** screen enables users to share their home service requests
 The user navigates to the **Create Listing** screen from the app’s main tabs. Users should see a total of 7 components. The **Create Listing** page employs a ScrollView.
 
 **Components:**  
-1. Upload images  (Currently serves no purpose, to be implemented)
+1. Upload images
 2. Enter a title  
 3. Write a description  
 4. Select a service type  
@@ -549,6 +583,12 @@ On submission, the app validates the inputs, shows errors if needed, and saves t
 ## User Input Fields and Validations
 
 The listing creation form uses several custom and third-party components for a better UX.
+
+### Images
+- **Placeholder:** Plus Icon
+- **No validation, can be left empty**
+
+The users can upload a total of 3 images
 
 ### Title
 - **Placeholder:** “Enter Title”  
@@ -606,14 +646,56 @@ When the user presses the **Post** button:
   - `price`  (text)
   - `type` (text)  
   - `request` (true/false based on Post Type)  
-  - `created_at` (timestamp)  
+  - `created_at` (timestamp)
+  - `images` (text array)
 
 - **Step 4:**    
-  - It inserts a new record into the “Listings” table.  
+  - It inserts a new record into the “Listings” table. It will also insert the filename(`image_${Date.now()}_${index}.${extension || 'jpg'}`) as well as Uint8Array (Binary data) of the image to the **images** bucket in supabase
+ 
+The uploading process is shown as follows:
+
+      const base64Image = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const buffer = decode(base64Image);
+
+      const extension = uri.split('.').pop();
+      const fileName = `image_${Date.now()}_${index}.${extension || 'jpg'}`;
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, buffer, {
+          contentType: 'image/jpeg', 
+          upsert: true,
+        });
+
+
 
 - **Step 5:**  
   - If successful, clears the form and navigates the user back to the **Listing** tab.  
   - If there’s an error, displays an appropriate error message.
+
+## Creating v.s. Editing
+
+The interface for creating a listing and editing a listing are similar as they used the same code base.
+
+However, there are some differences as follows:
+
+For editing, the fields are pre-filled. For creating, the fields do not contain any inputs, they only contain placeholders.
+
+For editing, the button below will state "Update". For creating, the button below will state "Post".
+
+For editing, there is a backward navigation icon at the top of the screen beside the "Edit Listing" text, main tabs will not be present below the screen.
+For creating, there is no backward navigation. However, main tabs will be present below the screen.
+
+The different interfaces will be displayed below for user reference:
+
+### Creating
+![Creating](READMEimages/Creating.png)
+
+### Editing
+![Editing](READMEimages/Editing.png)
     
 ---
 
@@ -625,6 +707,48 @@ The profile tab will provide the following details:
 - User's completed listing
 - User's review
 - User's rating
+- A personal calendar for users to track their schedule
+
+The interface for the profile tab will be displayed below for user reference:
+![Profile Tab](READMEimages/ProfileTab.png)
+
+## Layout
+
+The profile page is laid out as follows:
+- A text "Welcome, {user}"
+- A button for "Completed Listings"
+- A button for "My Reviews"
+- A personal calendar
+- Details of the events on the date selected
+
+### Completed Listings
+
+Upon marking the listing as completed or clicking on the "Completed Listings" button. Users will be redirected to this page.
+
+This page uses the same Item Card as the Home Tab, however, instead of "View Details" as the placeholder for the Custom button, the button will display "View Receipt" instead
+
+The mechanism for how the item cards are displayed is the same as that in Home tab.
+
+The interface for the listings will be displayed below for user reference:
+![Completed Listings](READMEimages/CompletedListingView.png)
+
+Upon clicking on "View Receipt" button, the user will be directed to a "Proof of Completion" page.
+
+#### Proof of Completion
+
+The Proof of Completion is a document issued by Renow that confirms that the original author of the post has marked his request/service as **Completed**
+
+The lay out for the Proof of Completion is as follows:
+- Renow Logo followed by "Proof of Completion" text
+- Title of the listing
+- Price which the listing is completed for
+- Description of the listing
+- The username of the service receiver
+- The username of the service provider
+- The date of completion
+
+The interface for the layout of the Proof of Completion will be displayed below for user reference:
+![Proof of Completion](READMEimages/ProofofCompletion.png)
 
 ## Logging out
 
