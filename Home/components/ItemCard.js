@@ -12,16 +12,21 @@ import {
 
 const ItemCard = ({ item }) => {
   const navigation = useNavigation();
-  const viewDetail = () => {
-    navigation.navigate('ItemDetails', { item });
-  }
-
+  
   const headerColour = item.request ? 'maroon' : '#001B5B';
 
   const { data, error } = supabase
   .storage
   .from('images')
   .getPublicUrl(item.images[0]);
+
+  const viewDetail = () => {
+    if (item.completed) {
+      navigation.navigate('ItemReceipt', { item });
+    } else {
+      navigation.navigate('ItemDetails', { item });
+    }
+  }
 
   return (
     <View style={styles.itemContainer}>

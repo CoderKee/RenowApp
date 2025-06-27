@@ -1,12 +1,12 @@
 import React, { useLayoutEffect, useState, useCallback, useEffect, use } from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import CustomButton from './components/CustomButton';
+import UIButton from './components/UIButton';
 import { useUser } from '../Home/globalContext/UserContext';
 import { supabase } from '../server/supabase.js';
-import Calendar from './components/Calendar.js';
 import ProfileCalendar from './profileTabs/ProfileCalendar';
 import { useFocusEffect } from '@react-navigation/native';
 import dayjs from 'dayjs';
+import ReviewDisplay from './components/ReviewDisplay.js';
 import { 
   StyleSheet, 
   Text, 
@@ -28,6 +28,7 @@ const ProfileScreen = ({ navigation }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [tasksByDate, setTasksByDate] = useState({});
   const [tasksForSelectedDate, setTasksForSelectedDate] = useState([]);
+  const [review, setReview] = useState(false);
   const { username } = useUser();
 
   const fetchCalendarEvents = useCallback(async () => {
@@ -149,16 +150,18 @@ const ProfileScreen = ({ navigation }) => {
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginVertical: 20, alignSelf: 'flex-start', marginLeft:'5%', color: 'black'
        }}> Welcome, {username} </Text>
       
-      <CustomButton
+      <UIButton
+        icon={"list"}
         color={"black"}
         text="Completed Listings"
         onPress={() => navigation.navigate('CompletedListing')}  
       />
-      <CustomButton
+      <UIButton
+        icon = {"rate-review"}
         color={"black"}
         text="My Reviews"
-        onPress={() => null}  
-        />
+        onPress={() => setReview(true)}  
+      />
       <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 50, alignSelf: 'center', color: 'black' }}>
         Calendar</Text>
       <ProfileCalendar
@@ -197,7 +200,13 @@ const ProfileScreen = ({ navigation }) => {
           )}
         </>
       )}
-      </View>
+    </View>
+    <ReviewDisplay
+      visible={review}
+      onClose={() => setReview(false)}
+      user={username}
+    />
+
     </ScrollView>
     
   );

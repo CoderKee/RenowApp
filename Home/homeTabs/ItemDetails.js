@@ -7,9 +7,7 @@ import AlertModal from '../components/AlertModal';
 import  Icon  from 'react-native-vector-icons/MaterialIcons';
 import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
-import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
-import ItemReceipt from '../profileTabs/ItemReceipt';
-
+import ReviewDisplay from '../components/ReviewDisplay';
 import { 
     ScrollView, 
     StyleSheet, 
@@ -29,8 +27,10 @@ const ItemDetails = ({ route, navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [unacceptedModalVisible, setUnacceptedModalVisible] = useState(false);
     const [confirmVisible, setConfirmVisible] = useState(false);
+    const [reviewVisible, setReviewVisible] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [reviewDisplay, setReviewDisplay] = useState(false);
 
     const insets = useSafeAreaInsets();
 
@@ -56,7 +56,7 @@ const ItemDetails = ({ route, navigation }) => {
                         style={{ marginRight: 15 }}
                         onPress={unAcceptTask}
                     >
-                        <Icon name="cancel" size={30} color='maroon'/> 
+                        <Icon name="cancel" size={30} color={styleColour}/> 
                     </TouchableOpacity>
                 )
             });
@@ -66,6 +66,8 @@ const ItemDetails = ({ route, navigation }) => {
     }, [navigation, item.accepted, item.accepted_by, username]);  
 
     const availableDates = item.available_dates || [];
+
+    const written = posterUsername === username ? item.poster_reviewed : item.accept_reviewed;
 
     const handleRefresh = useCallback(async () => {
         setRefreshing(true);
@@ -83,16 +85,30 @@ const ItemDetails = ({ route, navigation }) => {
         fetchPosterUserName();
     }, [fetchPosterUserName]);
 
-    const styleColour = item.request 
-                        ? item.accepted && posterUsername === username ? 'maroon'
-                        : item.accepted || posterUsername === username || selectedDate === null
-                            ? '#997570'
-                            : 'maroon'
-                        : item.accepted && posterUsername === username ? '#001B5B'
-                        : item.accepted || posterUsername === username || selectedDate === null 
-                            ? '#7393B3'
-                            : '#001B5B';
+    const textReturn = () => {
+        if (item.accepted && !item.completed) {
+            return posterUsername === username ? "Mark as completed" : "Accepted";
+        } 
+        if (!item.accepted && posterUsername === username) return "Cannot accept your own listing";
+        
+        return selectedDate === null ? "Please Select Date" : "Accept";
+    };
 
+    const styleColour = () => { 
+        const col = item.request ? ['maroon', '#997570'] : ['#001B5B', '#7393B3'];
+        if (item.accepted && !item.completed) {
+            return posterUsername === username ? col[0] : col[1];
+        } 
+        if (!item.accepted && posterUsername === username) return col[1];
+        if (item.completed) {
+            if (posterUsername === username) {
+                return item.poster_reviewed ? col[1] : col[0];
+            } else {            
+                return item.accept_reviewed ? col[1] : col[0];
+            }
+        }
+        return selectedDate === null ? col[1] : col[0];
+    };
     const dateFormat = {day: 'numeric', month: 'long', year: 'numeric'};
 
     const acceptTask = async () => {
@@ -102,22 +118,13 @@ const ItemDetails = ({ route, navigation }) => {
     const unAcceptTask = () => {
         setUnacceptedModalVisible(true);
     };
-    
-    //Change 'Write a Review' to review.written ? 'Review Written' : 'Write a Review'
-    const textReturn = () => {
-        if (item.accepted) {
-            return posterUsername === username ? "Mark as completed" : "Accepted";
-        }
-        if (posterUsername === username) return "Cannot accept your own listing";
-        if (item.completed) return "Write a Review";
-        return selectedDate === null ? "Please Select Date" : "Accept";
-    };
 
     const handleComplete = () => {
         setConfirmVisible(true);
     }
 
     const handleReview = () => {
+        setReviewVisible(true);
     }
 
     const completion = item.completed;
@@ -135,7 +142,7 @@ const ItemDetails = ({ route, navigation }) => {
 
     const accepted = item.accepted;
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             {/* Image scroll might be buggy */}
             <ScrollView 
                 contentContainerStyle={styles.contentContainer}
@@ -147,149 +154,133 @@ const ItemDetails = ({ route, navigation }) => {
                     />
                 }
             >
-                {!completion && (
-                    <>
-                        {accepted && (
-                            <Text style={{ textAlign: 'flex-start', fontSize: 18, color: 'black', fontWeight: 'bold' }}>
-                                This listing has been accepted by {item.accepted_by}
-                            </Text>
-                        )}
-
-                        <View style={styles.imageContainer}>
-                            {item.images && item.images.length > 0 ? (
-                                <>
-                                    <ScrollView
-                                        horizontal
-                                        pagingEnabled
-                                        snapToInterval={370}
-                                        snapToAlignment="center"
-                                        decelerationRate="fast"
-                                        showsHorizontalScrollIndicator={false}
-                                        style={styles.carouselContainer}
-                                        onScroll={onScroll}
-                                        scrollEventThrottle={16}
-                                    >
-                                        {item.images.map((imgName, index) => {
-                                            const { data, error } = supabase.storage
-                                                .from('images')
-                                                .getPublicUrl(imgName);
-
-                                            return (
-                                                <Image
-                                                    key={index}
-                                                    source={{ uri: data.publicUrl }}
-                                                    style={styles.carouselImage}
-                                                />
-                                            );
-                                        })}
-                                    </ScrollView>
-
-                                    <View style={styles.pagination}>
-                                        {item.images.map((_, index) => (
-                                            <View
-                                                key={index}
-                                                style={[
-                                                    styles.dot,
-                                                    currentIndex === index ? styles.activeDot : null,
-                                                ]}
-                                            />
-                                        ))}
-                                    </View>
-                                </>
-                            ) : (
-                                <Image
-                                    source={require('../../assets/image.png')}
-                                    style={styles.carouselImage}
-                                />
-                            )}
-                        </View>
-
-                        <View style={styles.descriptionContainer}>
-                            <Text style={styles.title}>{item.title}</Text>
-                            <Text style={styles.price}>${item.price}</Text>
-                            <Text style={styles.font}>Listed By {posterUsername}</Text>
-                            <Text style={styles.font}>On {formatDate(item.created_at)}</Text>
-                            <Text style={styles.description}>Description</Text>
-                            <Text style={styles.font}>{item.description}</Text>
-                        </View>
-
-                        <View style={{ marginVertical: 20 }}>
-                            <Text style={{ fontWeight: 'bold', marginBottom: 8, justifyContent: 'center' }}>
-                                Available Dates
-                            </Text>
-                            <Calendar
-                                availableDates={
-                                item.accepted && item.selected_date
-                                    ? [item.selected_date] // Only highlight the accepted date
-                                    : availableDates
-                                }
-                                selectedDate={
-                                item.accepted && item.selected_date
-                                    ? item.selected_date
-                                    : selectedDate
-                                }
-                                onSelectDate={
-                                item.accepted
-                                    ? () => {} // Disable selection if accepted
-                                    : setSelectedDate
-                                }
-                            />
-                            {item.accepted && item.selected_date && (
-                                <Text style={{ marginTop: 10, color: '#4A90E2' }}>
-                                Selected: {dayjs(item.selected_date).format('dddd, D MMMM YYYY')}
-                                </Text>
-                            )}
-                            {!item.accepted && selectedDate && (
-                                <Text style={{ marginTop: 10, color: '#4A90E2' }}>
-                                Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
-                                </Text>
-                            )}
-                        </View>
-                    </>
+                
+                {accepted && (
+                    <Text style={{ textAlign: 'flex-start', fontSize: 18, color: 'black', fontWeight: 'bold' }}>
+                        This listing has been accepted by {item.accepted_by}
+                    </Text>
                 )}
-                {completion && (
-                    <View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 30 }}>
-                            <Image 
-                                source={require("../../assets/Renow.png")} 
-                                style={{ width: 100, height: 100}}
-                                resizeMode='contain'
-                            />
-                            <Text style={{ flex: 1, textAlign: 'left', fontSize: 28, color: 'black', fontWeight: 'bold', marginLeft: 10 }}>
-                                Proof of Completion
-                            </Text>
-                        </View>
-                        <Text style={{ textAlign: 'flex-start', fontSize: 20, color: 'black', fontWeight: 'bold', marginVertical: 20 }}>Listing title: {item.title}</Text>
-                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>Price: ${item.price}</Text>
-                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginTop: 10}}>Listing description:</Text>
-                        <View style={{
-                            height: 300,
-                            alignContent: 'center',
-                            borderWidth: 1,
-                            borderRadius: 10,
-                            borderColor: 'gray',
-                            paddingHorizontal: 10,
-                            paddingVertical: 10,
+
+                <View style={styles.imageContainer}>
+                    {item.images && item.images.length > 0 ? (
+                        <>
+                            <ScrollView
+                                horizontal
+                                pagingEnabled
+                                snapToInterval={370}
+                                snapToAlignment="center"
+                                decelerationRate="fast"
+                                showsHorizontalScrollIndicator={false}
+                                style={styles.carouselContainer}
+                                onScroll={onScroll}
+                                scrollEventThrottle={16}
+                            >
+                                {item.images.map((imgName, index) => {
+                                    const { data, error } = supabase.storage
+                                        .from('images')
+                                        .getPublicUrl(imgName);
+
+                                    return (
+                                        <Image
+                                            key={index}
+                                            source={{ uri: data.publicUrl }}
+                                            style={styles.carouselImage}
+                                        />
+                                    );
+                                })}
+                            </ScrollView>
+
+                            <View style={styles.pagination}>
+                                {item.images.map((_, index) => (
+                                    <View
+                                        key={index}
+                                        style={[
+                                            styles.dot,
+                                            currentIndex === index ? styles.activeDot : null,
+                                        ]}
+                                    />
+                                ))}
+                            </View>
+                        </>
+                    ) : (
+                        <Image
+                            source={require('../../assets/image.png')}
+                            style={styles.carouselImage}
+                        />
+                    )}
+                </View>
+
+                <View style={styles.descriptionContainer}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.price}>${item.price}</Text>
+                    <Text style={styles.font}>Listed by:</Text>
+                    <TouchableOpacity
+                        style={{
+                            alignSelf: 'flex-start',
+                            paddingHorizontal: 8,
+                            paddingVertical: 2,
+                            borderRadius: 8,
+                            backgroundColor: '#E3F0FF', // subtle background
+                            marginVertical: 2,
+                        }}
+                        onPress={() => setReviewDisplay(true)}
+                    >
+                        <Text style={{
+                            color: '#1565c0',
+                            fontWeight: 'bold',
+                            textDecorationLine: 'underline',
+                            fontSize: 16,
                         }}>
-                        <Text style={styles.font}>{item.description}</Text>
-                        </View>
-                        
-                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>Service received by: {item.request ? posterUsername : item.accepted_by}</Text>
-                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>Service provided by: {item.request ? item.accepted_by : posterUsername}</Text>
-                        
-                        <Text style={{ textAlign: 'flex-start', fontSize: 15, color: 'black', fontWeight: 'bold', marginVertical: 10}}>
-                            Completed on {formatDate(item.completed_on)}
+                            {posterUsername}
                         </Text>
-                    </View>
-                )}
+                    </TouchableOpacity>
+                    <Text style={styles.font}>On {formatDate(item.created_at)}</Text>
+                    <Text style={styles.description}>Description</Text>
+                    <Text style={styles.font}>{item.description}</Text>
+                </View>
+
+                <View style={{ marginVertical: 20 }}>
+                    <Text style={{ fontWeight: 'bold', marginBottom: 8, justifyContent: 'center' }}>
+                        Available Dates
+                    </Text>
+                    <Calendar
+                        availableDates={
+                        item.accepted && item.selected_date
+                            ? [item.selected_date] // Only highlight the accepted date
+                            : availableDates
+                        }
+                        selectedDate={
+                        item.accepted && item.selected_date
+                            ? item.selected_date
+                            : selectedDate
+                        }
+                        onSelectDate={
+                        item.accepted
+                            ? () => {} // Disable selection if accepted
+                            : setSelectedDate
+                        }
+                    />
+                    {item.accepted && item.selected_date && (
+                        <Text style={{ marginTop: 10, color: '#4A90E2' }}>
+                        Selected: {dayjs(item.selected_date).format('dddd, D MMMM YYYY')}
+                        </Text>
+                    )}
+                    {!item.accepted && selectedDate && (
+                        <Text style={{ marginTop: 10, color: '#4A90E2' }}>
+                        Selected: {dayjs(selectedDate).format('dddd, D MMMM YYYY')}
+                        </Text>
+                    )}
+                </View>
+               
+            
             </ScrollView>
                 
             <View style={styles.accept}>
                 <CustomButton 
                     text={textReturn()}
-                    color={ styleColour }
+                    color={ styleColour() }
                     onPress={ (
-                        item.completed ? handleReview : item.accepted && posterUsername === username ? handleComplete
+                        item.accepted && posterUsername === username ? handleComplete
                         : item.accepted || selectedDate === null || posterUsername === username ? null : acceptTask) 
                     }
                 />
@@ -376,7 +367,7 @@ const ItemDetails = ({ route, navigation }) => {
                                     {
                                         text: "OK",
                                         onPress: () => {
-                                            navigation.navigate("CompletedListing");
+                                            navigation.replace("CompletedListing");
                                         }
                                     }
                                 ]
@@ -392,7 +383,13 @@ const ItemDetails = ({ route, navigation }) => {
                 alertText="Are you sure you want to mark as completed?"
                 confirmOption="Confirm"
             />
-        </SafeAreaView>
+            
+            <ReviewDisplay
+                visible={reviewDisplay}
+                onClose={() => setReviewDisplay(false)}
+                user={posterUsername}
+            />
+        </View>
     )
 }
 
