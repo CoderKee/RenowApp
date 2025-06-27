@@ -161,7 +161,7 @@ const ProfileScreen = ({ navigation }) => {
         color={"black"}
         text="My Reviews"
         onPress={() => setReview(true)}  
-        />
+      />
       <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 50, alignSelf: 'center', color: 'black' }}>
         Calendar</Text>
       <ProfileCalendar
@@ -206,11 +206,17 @@ const ProfileScreen = ({ navigation }) => {
       onClose={() => setReview(false)}
       user={username}
     />
+
     </ScrollView>
+    
   );
 
 }
 
 export default ProfileScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  text: {
+    color: 'black',
+  }
+})

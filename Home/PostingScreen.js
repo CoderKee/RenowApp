@@ -244,7 +244,6 @@ const PostingScreen = ({ route, navigation }) => {
       <Text style={styles.label}>
         Upload Images <Text style={{ fontWeight: 'normal', color: '#666' }}>({images.length}/3)</Text>
       </Text>
-      
       <FlatList
         horizontal
         data={images}

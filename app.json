@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/sion.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/sion.png",
       "resizeMode": "contain",
@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.barneylaw.renowapp"
+      "package": "com.coderkee.renowapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"

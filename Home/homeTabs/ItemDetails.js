@@ -32,6 +32,8 @@ const ItemDetails = ({ route, navigation }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [reviewDisplay, setReviewDisplay] = useState(false);
 
+    const insets = useSafeAreaInsets();
+
     const fetchPosterUserName = useCallback(async () => {
         if (!item.user_id) return;
         const { data, error } = await supabase
@@ -430,11 +432,13 @@ const styles = StyleSheet.create({
         flex: 4, 
         padding: 10,
     },
-
+    font: {
+        color: 'black',
+    },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
-        color: 'black'
+        color: 'black',
     },
     price: {
         color: 'green'

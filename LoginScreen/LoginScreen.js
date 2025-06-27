@@ -9,7 +9,6 @@ import {
   Text,
   Button,
   TouchableOpacity,
- 
 } from "react-native";
 import CustomInput from "./components/CustomInput";
 import CustomButton from './components/CustomButton';

@@ -31,7 +31,7 @@ const EditScreen = ({ route, navigation }) => {
   const [title, setTitle] = useState(item?.title || '');
   const [description, setDescription] = useState(item?.description || '');
   const [price, setPrice] = useState(item?.price?.toString() || '');
-  const [postType, setPostType] = useState('Request');
+  const [postType, setPostType] = useState(item?.request ? 'Request' : 'Service');
   const [loading, setLoading] = useState(false);
   const [markedDates, setMarkedDates] = useState(item?.available_dates || []);
   const [deleted, setDeleted] = useState([]);
