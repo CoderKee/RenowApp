@@ -1056,7 +1056,7 @@ The pop up modal will show the following:
 - Past reviews of the user
 
 The pop up modal will be displayed below for user reference:
-![My Reviews](READMEimages/RMyReviews.png)
+![My Reviews](READMEimages/MyReviews.png)
 
 #### Reviews and Ratings
 
