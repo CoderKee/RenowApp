@@ -251,8 +251,7 @@ If the user wishes to view the Listing, they may click on the **View** button to
 
 In the detailed view, the user may see the previously mentioned information with an addition of:
 - An image carousel that contains images uploaded by the poster
-- Price of the service
-- Username of the author
+- Clickable username of the author
 - Detailed Description
 - A calendar for the user to choose a date
 - An accept button
