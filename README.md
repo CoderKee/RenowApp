@@ -57,7 +57,7 @@ For android users, the steps are quite simple, albeit you need to allow for the 
 
 1. **Download the APK**
    - Visit the following link to download the latest RenowApp APK file:
-     - [Download RenowApp APK](<https://expo.dev/accounts/coderkee/projects/renowapp/builds/d38c0f2f-dd7e-4064-8061-df8eede96a6e>)
+     - [Download RenowApp APK](<https://expo.dev/accounts/coderkee/projects/renowapp/builds/9cd371e7-9ad9-4cfd-8e14-349272f3d60e>)
    - If prompted, allow your browser to download files from unknown sources.
 
 2. **Install the APK**
