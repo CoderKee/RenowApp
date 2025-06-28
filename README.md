@@ -301,6 +301,8 @@ A comprehensive filtering and search system for the RenowApp marketplace, enabli
 
 The filtering system provides a robust search and filter functionality for both service offerings and service requests in the RenowApp marketplace. Users can search by text, filter by service type, and set price ranges to find exactly what they're looking for.
 
+![Filter](READMEimages/FilterModal.png)
+
 ## Features
 
 ### Text Search
@@ -1076,9 +1078,443 @@ Upon completion, please press "Submit" for the review to be logged into the data
 
 For users to view their own reviews, please go to "My Reviews" under the profile tab as previously mentioned.
 
+# 📅 RenowApp Personal Calendar System
+
+A sophisticated personal calendar system that allows users to visualize and manage their scheduled service requests and offerings in an intuitive calendar interface.
+
+## 🌟 Overview
+
+The Personal Calendar System provides users with a comprehensive view of their scheduled activities in the RenowApp marketplace. Users can see both service requests they've accepted and services they're providing in a color-coded calendar format with detailed daily task views.
+
+## ✨ Features
+
+### 📅 Visual Calendar Interface
+- **Monthly view**: Full month calendar display with navigation
+- **Multi-dot marking**: Support for multiple events per day
+- **Color-coded events**: Different colors for different activity types
+- **Interactive dates**: Tap to select and view detailed information
+
+### 🎯 Task Type Differentiation
+- **Service Requests**: Maroon dots for requests accepted by the user
+- **Service Offerings**: Dark blue dots for user's services accepted by others
+- **Multiple events**: Support for multiple tasks on the same day
+- **Clear labeling**: Each task clearly labeled with type and category
+
+### 📱 Daily Task Details
+- **Date selection**: Tap any date to view tasks for that day
+- **Task listing**: Detailed list of all tasks for selected date
+- **Task information**: Shows task type, service category, and title
+- **Empty state**: Clear indication when no tasks exist for a date
+
+### 🔄 Real-time Updates
+- **Automatic refresh**: Updates when screen comes into focus
+- **Pull-to-refresh**: Manual refresh capability
+- **Live data**: Always shows current accepted tasks and services
+
+## 🏗️ Components
+
+### Core Components
+
+#### `ProfileScreen.js`
+Main screen containing the calendar and user interface:
+- Manages calendar state and data fetching
+- Handles user interactions and navigation
+- Displays task details for selected dates
+- Integrates with user authentication
+
+#### `ProfileCalendar.js`
+Dedicated calendar component:
+- Renders the visual calendar interface
+- Handles date selection and marking
+- Provides customizable theming
+- Supports multi-dot event marking
+
+## 🏛️ Architecture
+
+### Component Hierarchy
+```
+ProfileScreen
+├── ProfileCalendar
+├── Task Details View
+├── UIButton Components
+└── ReviewDisplay Modal
+```
+
+### State Management Structure
+
+```javascript
+// Calendar state
+const [markedDates, setMarkedDates] = useState({});
+const [selectedDate, setSelectedDate] = useState(null);
+const [tasksByDate, setTasksByDate] = useState({});
+const [tasksForSelectedDate, setTasksForSelectedDate] = useState([]);
+
+// UI state
+const [refreshing, setRefreshing] = useState(false);
+const [review, setReview] = useState(false);
+
+// Color constants
+const SERVICE_COLOR = '#001B5B'; // Dark blue for services
+const REQUEST_COLOR = 'maroon';  // Maroon for requests
+```
+
+### Data Flow
+```
+Database → fetchCalendarEvents → Process Data → Update Calendar
+     ↓              ↓                ↓              ↓
+Supabase → Filter by User → Group by Date → Render Dots
+     ↓              ↓                ↓              ↓
+Tasks → Build markedDates → Set State → Display Calendar
+```
+
+## 📊 Calendar Visualization
+
+### Multi-Dot System
+
+The calendar uses a sophisticated multi-dot system to display multiple events:
+
+```javascript
+// Example markedDates structure
+{
+  '2024-01-15': {
+    dots: [
+      { key: 'request-0', color: 'maroon' },
+      { key: 'service-1', color: '#001B5B' }
+    ]
+  }
+}
+```
+
+### Color Coding System
+
+| Color | Type | Description |
+|-------|------|-------------|
+| 🔴 Maroon | REQUEST | Services requested by user and accepted by others |
+| 🔵 Dark Blue | SERVICE | User's services accepted by customers |
+| 🟠 Orange | Selected | Currently selected date highlight |
+| 🔵 Light Blue | Today | Today's date indicator |
+
+### Date Selection Enhancement
+
+```javascript
+// Dynamic date marking with selection
+markedDates={
+  selectedDate && typeof selectedDate === 'string'
+    ? {
+        ...markedDates,
+        [selectedDate]: {
+          ...(markedDates[selectedDate] || {}),
+          selected: true,
+          selectedColor: 'orange',
+        },
+      }
+    : markedDates
+}
+```
+
+## 🔌 Data Integration
+
+### Database Queries
+
+#### Accepted Requests (User as Customer)
+```javascript
+const { data: acceptedByMe, error: error1 } = await supabase
+  .from('Listings')
+  .select('*')
+  .eq('accepted_by', username)
+  .eq('accepted', true);
+```
+
+#### User Services (User as Provider)
+```javascript
+const { data: myServices, error: error2 } = await supabase
+  .from('Listings')
+  .select('*, Users!inner(username)')
+  .eq('Users.username', username)
+  .eq('accepted', true);
+```
+
+### Data Processing Pipeline
+
+```javascript
+const fetchCalendarEvents = useCallback(async () => {
+  // 1. Fetch user's accepted requests
+  // 2. Fetch user's services accepted by others
+  // 3. Process and group by date
+  // 4. Build markedDates object
+  // 5. Update calendar state
+}, [username, selectedDate]);
+```
+
+### Date Processing
+
+```javascript
+// Convert timestamps to calendar format
+const dateStr = dayjs(item.selected_date).format('YYYY-MM-DD');
+
+// Group tasks by date
+if (!dotsByDate[dateStr]) dotsByDate[dateStr] = [];
+dotsByDate[dateStr].push({ 
+  key: `request-${idx}`, 
+  color: REQUEST_COLOR 
+});
+```
+
+## 📊 State Management
+
+### Lifecycle Management
+
+```javascript
+// Fetch data when screen comes into focus
+useFocusEffect(
+  useCallback(() => {
+    handleRefresh();
+  }, [handleRefresh])
+);
+
+// Update task details when date selection changes
+useEffect(() => {
+  setTasksForSelectedDate(tasksByDate[selectedDate] || []);
+}, [selectedDate, tasksByDate]);
+```
+
+### Refresh Handling
+
+```javascript
+const handleRefresh = useCallback(async () => {
+  setRefreshing(true);
+  await fetchCalendarEvents();
+  setRefreshing(false);
+}, [fetchCalendarEvents]);
+```
+
+## 🎨 User Interface
+
+### Calendar Styling
+
+```javascript
+// ProfileCalendar theme configuration
+theme={{
+  selectedDayBackgroundColor: 'orange',
+  todayTextColor: '#4A90E2',
+  dotColor: '#4A90E2',
+  arrowColor: '#4A90E2',
+  textDayFontWeight: 'bold',
+  textMonthFontWeight: 'bold',
+  textDayHeaderFontWeight: 'bold',
+}}
+```
+
+### Responsive Design
+
+```javascript
+// Dynamic calendar width based on screen size
+calendarWidth={Dimensions.get('window').width - 40}
+
+// Responsive styling
+style={{
+  width: calendarWidth,
+  alignSelf: 'center',
+  borderRadius: 10,
+  overflow: 'hidden',
+  elevation: 2,
+}}
+```
+
+### Task Display Format
+
+```javascript
+// Daily task rendering
+{tasksForSelectedDate.map((task, idx) => (
+  <Text key={idx} style={{ fontSize: 16, marginBottom: 5 }}>
+    {task.typeLabel} - {task.type} - {task.title}
+  </Text>
+))}
+```
+
+## ⚡ Performance Features
+
+### Optimized Data Fetching
+- **Memoized callbacks**: Prevent unnecessary re-renders
+- **Focused updates**: Only fetch data when screen is active
+- **Efficient queries**: Targeted database queries with proper indexing
+
+### Memory Management
+- **State cleanup**: Proper cleanup of calendar state
+- **Conditional rendering**: Only render task details when date is selected
+- **Optimized re-renders**: useCallback and useEffect dependencies
+
+### Loading States
+- **Pull-to-refresh**: Native refresh control integration
+- **Loading indicators**: Visual feedback during data fetching
+- **Error handling**: Graceful error handling with console logging
+
+## 🚀 Usage
+
+### Basic Implementation
+
+```javascript
+import ProfileCalendar from './profileTabs/ProfileCalendar';
+
+// In your component
+<ProfileCalendar
+  markedDates={markedDates}
+  selectedDate={selectedDate}
+  onSelectDate={setSelectedDate}
+  calendarWidth={Dimensions.get('window').width - 40}
+/>
+```
+
+### Date Selection Handling
+
+```javascript
+// Handle date selection
+onSelectDate={date => {
+  if (typeof date === 'string') setSelectedDate(date);
+}}
+```
+
+### Task Information Display
+
+```javascript
+// Display tasks for selected date
+{selectedDate && (
+  <>
+    <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
+      Tasks for {dayjs(selectedDate).format('dddd, DD MMMM YYYY')}:
+    </Text>
+    {tasksForSelectedDate.length === 0 ? (
+      <Text style={{ color: 'gray' }}>No tasks for this day.</Text>
+    ) : (
+      // Render task list
+    )}
+  </>
+)}
+```
+
+## 🔧 Configuration
+
+### Color Customization
+
+```javascript
+// Modify colors in ProfileScreen.js
+const SERVICE_COLOR = '#001B5B'; // Dark blue for services
+const REQUEST_COLOR = 'maroon';  // Maroon for requests
+
+// Calendar theme colors in ProfileCalendar.js
+theme={{
+  selectedDayBackgroundColor: 'orange',
+  todayTextColor: '#4A90E2',
+  arrowColor: '#4A90E2',
+}}
+```
+
+### Calendar Settings
+
+```javascript
+// Adjust calendar properties
+markingType="multi-dot"  // Support multiple dots per date
+current={selectedDate}   // Set current view date
+```
+
+### Date Formatting
+
+```javascript
+// Customize date display formats
+dayjs(selectedDate).format('dddd, DD MMMM YYYY')  // Full date
+dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
+```
+
+## 🔄 Refresh Mechanisms
+
+### Automatic Refresh
+- **Focus-based**: Refreshes when user returns to screen
+- **Real-time**: Always shows current data state
+
+### Manual Refresh
+- **Pull-to-refresh**: Swipe down gesture support
+- **Button refresh**: Programmatic refresh capability
+
+## 📱 User Experience Features
+
+### Visual Feedback
+- **Date highlighting**: Selected dates are highlighted in orange
+- **Today indicator**: Current date is highlighted in blue
+- **Multi-dot display**: Multiple events shown as separate colored dots
+
+### Accessibility
+- **Touch targets**: Adequate sizing for date selection
+- **Clear labeling**: Task types clearly labeled
+- **Color contrast**: High contrast colors for visibility
+
+### Information Architecture
+- **Hierarchical display**: Month → Date → Tasks
+- **Clear categorization**: SERVICE vs REQUEST distinction
+- **Detailed information**: Task type, category, and title
+
+## 🐛 Error Handling
+
+```javascript
+// Comprehensive error handling
+if (error1 || error2) {
+  console.error('Error fetching calendar events:', error1 || error2);
+  setRefreshing(false);
+  return;
+}
+
+// Type safety for date handling
+if (date && typeof date === 'string') {
+  marked[date] = { dots };
+}
+```
+
+## 🔮 Future Enhancements
+
+- **Week view**: Alternative calendar layout
+- **Event editing**: Modify task details from calendar
+- **Reminders**: Push notifications for upcoming tasks
+- **Export functionality**: Export calendar to other applications
+- **Recurring events**: Support for recurring service appointments
+- **Time slots**: Add specific time scheduling within dates
+- **Status indicators**: Visual status for completed/pending tasks
+- **Better UI**: More comprehensive visuals for pending tasks
+
+## 📝 Dependencies
+
+```json
+{
+  "react-native-calendars": "Calendar component library",
+  "dayjs": "Date manipulation and formatting",
+  "@react-navigation/native": "Navigation framework",
+  "@supabase/supabase-js": "Database integration",
+  "react-native-vector-icons": "Icon library"
+}
+```
+
+## 📸 Calendar States
+
+### Empty Calendar
+- Clean monthly view with navigation arrows
+- Today's date highlighted in blue
+- No events marked
+
+### Active Calendar
+- Multiple colored dots on various dates
+- Selected date highlighted in orange
+- Clear visual distinction between event types
+
+### Task Detail View
+- Selected date with formatted display
+- List of tasks with type labels
+- Empty state message when no tasks exist
+
+---
+
 ## Logging out
 
 Users can click on the **Exit** icon at the top right side of their screen. Upon clicking the icon, the user will be prompted with a confirmation message on whether they want to log out of Renow.
+
+![Log out](READMEimages/logout.png)
 
 If the user wishes to log out, please select **Logout**  
 Otherwise, please select **Cancel**
