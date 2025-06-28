@@ -287,6 +287,296 @@ If a user tries to accept their own listing, the button will do nothing(coded as
   **Step 5:**  
   After the user accepts the request, supabase updates the Listing with the name of the acceptor and sends the user to the Accepted Listing Screen to view their List of accepted Listings
 
+# 🔍 RenowApp Filtering System
+
+A comprehensive filtering and search system for the RenowApp marketplace, enabling users to efficiently find service listings and requests through multiple criteria.
+
+## 🌟 Overview
+
+The filtering system provides a robust search and filter functionality for both service offerings and service requests in the RenowApp marketplace. Users can search by text, filter by service type, and set price ranges to find exactly what they're looking for.
+
+## ✨ Features
+
+### 🔤 Text Search
+- **Real-time search**: Search listings by title with instant results
+- **Case-insensitive**: Search works regardless of text case
+- **Clear functionality**: Easy-to-access clear button (X) to reset search
+
+### 🏷️ Service Type Filtering
+- **Predefined categories**: Choose from Cleaning, Installation, Renovation, Repairs, or Others
+- **All option**: View all listings regardless of type
+- **Dropdown interface**: Clean dropdown picker for easy selection
+
+### 💰 Price Range Filtering
+- **Dual sliders**: Separate min/max price controls
+- **Real-time updates**: See price changes as you drag sliders
+- **Dynamic range**: Min price adjusts max price options automatically
+- **Range**: $0 - $1000 with $1 increments
+
+### 📱 User Experience
+- **Modal interface**: Clean, overlay modal for filter options
+- **Apply/Cancel/Clear**: Full control over filter application
+- **Persistent state**: Filters maintain state across screen navigation
+- **Loading states**: Visual feedback during data fetching
+
+## 🏗️ Components
+
+### Core Components
+
+#### `HomeRequest.js` & `HomeService.js`
+Main listing screens that implement the filtering system:
+- Handle search text input
+- Manage filter state
+- Display filtered results
+- Implement pagination
+
+#### `FilterModal.js`
+Dedicated modal component for filter options:
+- Service type dropdown
+- Price range sliders
+- Filter actions (Apply, Cancel, Clear)
+
+#### `ItemCard.js`
+Displays individual listing items in the filtered results.
+
+## 🏛️ Architecture
+
+### State Management Structure
+
+```javascript
+// Filter state object
+const [filters, setFilters] = useState({ 
+  type: null,        // Service type filter
+  minPrice: null,    // Minimum price filter
+  maxPrice: null     // Maximum price filter
+});
+
+// Search state
+const [searchText, setSearchText] = useState('');
+
+// UI state
+const [filterModalVisible, setFilterModalVisible] = useState(false);
+```
+
+### Data Flow
+
+```
+User Input → State Update → Database Query → Results Display
+     ↓              ↓              ↓              ↓
+Search Text → setSearchText → Supabase Query → FlatList
+Filters → setFilters → Query Filters → Paginated Results
+```
+
+## 🚀 Usage
+
+### Basic Search
+
+```javascript
+// Search input component
+<TextInput
+  style={styles.searchInput}
+  placeholder="Search listings..."
+  value={searchText}
+  onChangeText={setSearchText}
+/>
+```
+
+### Filter Application
+
+```javascript
+// Filter modal trigger
+<TouchableOpacity
+  style={styles.filterButton}
+  onPress={() => setFilterModalVisible(true)}
+>
+  <Icon name="sliders" size={24} color="maroon" />
+</TouchableOpacity>
+```
+
+### Database Query Construction
+
+```javascript
+const fetchItems = async (pageNumber, filters, searchText) => {
+  let query = supabase
+    .from('Listings')
+    .select('*')
+    .eq('request', true)  // or false for services
+    .eq('accepted', false)
+    .eq('completed', false);
+
+  // Apply filters
+  if (filters.type) {
+    query = query.eq('type', filters.type);
+  }
+  if (filters.minPrice != null) {
+    query = query.gte('price', filters.minPrice);
+  }
+  if (filters.maxPrice != null) {
+    query = query.lte('price', filters.maxPrice);
+  }
+  if (searchText) {
+    query = query.ilike('title', `%${searchText}%`);
+  }
+
+  // Apply pagination and sorting
+  query = query.order('created_at', { ascending: false })
+              .range(from, to);
+};
+```
+
+## 🔌 API Integration
+
+### Supabase Integration
+
+The system integrates with Supabase PostgreSQL database:
+
+#### Table Structure
+```sql
+Listings {
+  id: uuid,
+  title: text,
+  type: text,
+  price: numeric,
+  request: boolean,
+  accepted: boolean,
+  completed: boolean,
+  created_at: timestamp,
+  -- other fields...
+}
+```
+
+#### Query Operations
+- **Text Search**: `ilike` operator for case-insensitive partial matching
+- **Type Filter**: `eq` operator for exact service type matching
+- **Price Range**: `gte` and `lte` operators for price boundaries
+- **Status Filters**: `eq` operators for request/accepted/completed status
+- **Sorting**: `order` by creation date (newest first)
+- **Pagination**: `range` for efficient data loading
+
+## 📊 State Management
+
+### Filter State Flow
+
+```javascript
+// Initial state
+{ type: null, minPrice: null, maxPrice: null }
+
+// User applies filters
+{ type: 'Cleaning', minPrice: 50, maxPrice: 200 }
+
+// State triggers useEffect
+useEffect(() => {
+  setItems([]);         // Clear previous items
+  setPage(0);           // Reset page
+  setNoMoreData(false); // Reset pagination flag
+  fetchItems(0, filters, searchText);
+}, [filters, searchText]);
+```
+
+### Pagination Management
+
+```javascript
+const PAGE_SIZE = 5;
+
+const handleLoadMore = () => {
+  if (!loading && !noMoreData) {
+    fetchItems(page, filters, searchText);
+  }
+};
+```
+
+## ⚡ Performance Optimizations
+
+### Efficient Data Loading
+- **Pagination**: Load 5 items per request to minimize initial load time
+- **Range queries**: Use database-level filtering instead of client-side filtering
+- **Debounced search**: Prevent excessive API calls during typing
+
+### State Optimizations
+- **useCallback**: Memoized functions for refresh and load more
+- **useFocusEffect**: Refresh data only when screen comes into focus
+- **Conditional rendering**: Show loading states and empty states appropriately
+
+### Memory Management
+- **Incremental loading**: Append new items instead of replacing entire list
+- **State cleanup**: Clear items and reset pagination on filter changes
+
+## 🎨 UI/UX Features
+
+### Visual Feedback
+- **Loading indicators**: ActivityIndicator during data fetching
+- **Empty states**: Informative message when no results found
+- **Pull-to-refresh**: Swipe down to refresh listings
+- **Search clear button**: Quick way to clear search text
+
+### Accessibility
+- **Touch targets**: Adequate sizing for filter buttons
+- **Visual hierarchy**: Clear distinction between search and filter controls
+- **Color coding**: Consistent maroon theme throughout
+
+## 🔧 Configuration
+
+### Service Types
+Modify available service types in `FilterModal.js`:
+
+```javascript
+const SERVICE_TYPES = [
+  { label: 'All', value: null },
+  { label: 'Cleaning', value: 'Cleaning' },
+  { label: 'Installation', value: 'Installation' },
+  { label: 'Renovation', value: 'Renovation' },
+  { label: 'Repairs', value: 'Repairs' },
+  { label: 'Others', value: 'Others' },
+];
+```
+
+### Price Range
+Adjust price limits in `FilterModal.js`:
+
+```javascript
+const MIN_PRICE = 0;
+const MAX_PRICE = 1000;
+```
+
+### Pagination
+Modify page size in component files:
+
+```javascript
+const PAGE_SIZE = 5; // Adjust as needed
+```
+
+## 🐛 Error Handling
+
+The system includes comprehensive error handling:
+
+```javascript
+if (error) {
+  console.error('Error fetching items:', error);
+} else if (data) {
+  // Process successful response
+}
+```
+
+## 🔮 Future Enhancements
+
+- **Location-based filtering**: Add geographical search capabilities
+- **Date range filters**: Filter by listing creation or service dates
+- **Sorting options**: Multiple sort criteria (price, date, relevance)
+- **Saved filters**: Allow users to save frequently used filter combinations
+- **Advanced search**: Boolean operators and multiple field search
+
+## 📝 Dependencies
+
+```json
+{
+  "@react-navigation/native": "Navigation framework",
+  "@supabase/supabase-js": "Database integration",
+  "react-native-dropdown-picker": "Service type selector",
+  "@react-native-community/slider": "Price range controls",
+  "react-native-vector-icons": "Filter and search icons",
+  "dayjs": "Date formatting"
+}
+```
 ---
 
 # Listing
