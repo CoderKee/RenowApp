@@ -34,8 +34,9 @@ const AcceptedListing = () => {
 
   const { data, error } = await supabase
     .from('Listings')
-    .select('*')
+    .select('*, Users!inner(username)')
     .eq('completed', true)
+    .eq('Users.username', username)
     .order('completed_on', { ascending: false })
     .range(from, to);
 
