@@ -251,12 +251,18 @@ If the user wishes to view the Listing, they may click on the **View** button to
 
 In the detailed view, the user may see the previously mentioned information with an addition of:
 - An image carousel that contains images uploaded by the poster
+- Price of the service
+- Username of the author
 - Detailed Description
 - A calendar for the user to choose a date
 - An accept button
 
 Any user can click on the accept button to accepted any Listing(except their own), after which they will be prompted to confirm their decision through a modal.
 Upon confirmation of acceptance, to user will be brought to their **Accepted Listing** Screen.
+
+Users can also click on the author of listing (the username should be highlighted in blue)
+
+Upon clicking on the author's username, it should display a pop-up modal consisting of past reviews of the author.
 
 If the user views their own Listing in detail, the accept button is greyed out an clicking it will do nothing.
 
@@ -287,39 +293,39 @@ If a user tries to accept their own listing, the button will do nothing(coded as
   **Step 5:**  
   After the user accepts the request, supabase updates the Listing with the name of the acceptor and sends the user to the Accepted Listing Screen to view their List of accepted Listings
 
-# 🔍 RenowApp Filtering System
+# RenowApp Filtering System
 
 A comprehensive filtering and search system for the RenowApp marketplace, enabling users to efficiently find service listings and requests through multiple criteria.
 
-## 🌟 Overview
+## Overview
 
 The filtering system provides a robust search and filter functionality for both service offerings and service requests in the RenowApp marketplace. Users can search by text, filter by service type, and set price ranges to find exactly what they're looking for.
 
-## ✨ Features
+## Features
 
-### 🔤 Text Search
+### Text Search
 - **Real-time search**: Search listings by title with instant results
 - **Case-insensitive**: Search works regardless of text case
 - **Clear functionality**: Easy-to-access clear button (X) to reset search
 
-### 🏷️ Service Type Filtering
+### Service Type Filtering
 - **Predefined categories**: Choose from Cleaning, Installation, Renovation, Repairs, or Others
 - **All option**: View all listings regardless of type
 - **Dropdown interface**: Clean dropdown picker for easy selection
 
-### 💰 Price Range Filtering
+### Price Range Filtering
 - **Dual sliders**: Separate min/max price controls
 - **Real-time updates**: See price changes as you drag sliders
 - **Dynamic range**: Min price adjusts max price options automatically
 - **Range**: $0 - $1000 with $1 increments
 
-### 📱 User Experience
+### User Experience
 - **Modal interface**: Clean, overlay modal for filter options
 - **Apply/Cancel/Clear**: Full control over filter application
 - **Persistent state**: Filters maintain state across screen navigation
 - **Loading states**: Visual feedback during data fetching
 
-## 🏗️ Components
+## Components
 
 ### Core Components
 
@@ -339,7 +345,7 @@ Dedicated modal component for filter options:
 #### `ItemCard.js`
 Displays individual listing items in the filtered results.
 
-## 🏛️ Architecture
+## Architecture
 
 ### State Management Structure
 
@@ -367,7 +373,7 @@ Search Text → setSearchText → Supabase Query → FlatList
 Filters → setFilters → Query Filters → Paginated Results
 ```
 
-## 🚀 Usage
+## Usage
 
 ### Basic Search
 
@@ -424,7 +430,7 @@ const fetchItems = async (pageNumber, filters, searchText) => {
 };
 ```
 
-## 🔌 API Integration
+## API Integration
 
 ### Supabase Integration
 
@@ -453,7 +459,7 @@ Listings {
 - **Sorting**: `order` by creation date (newest first)
 - **Pagination**: `range` for efficient data loading
 
-## 📊 State Management
+## State Management
 
 ### Filter State Flow
 
@@ -485,7 +491,7 @@ const handleLoadMore = () => {
 };
 ```
 
-## ⚡ Performance Optimizations
+## Performance Optimizations
 
 ### Efficient Data Loading
 - **Pagination**: Load 5 items per request to minimize initial load time
@@ -501,7 +507,7 @@ const handleLoadMore = () => {
 - **Incremental loading**: Append new items instead of replacing entire list
 - **State cleanup**: Clear items and reset pagination on filter changes
 
-## 🎨 UI/UX Features
+## UI/UX Features
 
 ### Visual Feedback
 - **Loading indicators**: ActivityIndicator during data fetching
@@ -514,7 +520,7 @@ const handleLoadMore = () => {
 - **Visual hierarchy**: Clear distinction between search and filter controls
 - **Color coding**: Consistent maroon theme throughout
 
-## 🔧 Configuration
+## Configuration
 
 ### Service Types
 Modify available service types in `FilterModal.js`:
@@ -545,7 +551,7 @@ Modify page size in component files:
 const PAGE_SIZE = 5; // Adjust as needed
 ```
 
-## 🐛 Error Handling
+## Error Handling
 
 The system includes comprehensive error handling:
 
@@ -557,7 +563,7 @@ if (error) {
 }
 ```
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - **Location-based filtering**: Add geographical search capabilities
 - **Date range filters**: Filter by listing creation or service dates
@@ -565,7 +571,7 @@ if (error) {
 - **Saved filters**: Allow users to save frequently used filter combinations
 - **Advanced search**: Boolean operators and multiple field search
 
-## 📝 Dependencies
+## Dependencies
 
 ```json
 {
@@ -860,7 +866,7 @@ The user navigates to the **Create Listing** screen from the app’s main tabs. 
 3. Write a description  
 4. Select a service type  
 5. Enter a price
-6. A calendar (to be implemented)
+6. A calendar
 7. Choose to post as a “Request” or “Service”  
 8. Submit the listing  
 
@@ -1039,6 +1045,36 @@ The lay out for the Proof of Completion is as follows:
 
 The interface for the layout of the Proof of Completion will be displayed below for user reference:
 ![Proof of Completion](READMEimages/ProofofCompletion.png)
+
+### My Reviews
+
+Upon clicking on "My Reviews" button, a pop up modal will be displayed.
+
+The pop up modal will show the following:
+
+- The users' average ratings
+- Past reviews of the user
+
+The pop up modal will be displayed below for user reference:
+![My Reviews](READMEimages/RMyReviews.png)
+
+#### Reviews and Ratings
+
+Upon entering the Proof of Completion page, users should be able to see a "Write a Review" button in Red if user has not yet written a review. Else, it will display a "Review Written" button in gray.
+
+To write a review, users should click on the "Write a Review" button.
+
+A pop up modal will be displayed as shown:
+
+![Review Modal](READMEimages/ReviewModal.png)
+
+Users can provide a rating from 1 to 5 to their reviewee.
+
+Users can also provide a short description of their experience with the reviewee.
+
+Upon completion, please press "Submit" for the review to be logged into the database.
+
+For users to view their own reviews, please go to "My Reviews" under the profile tab as previously mentioned.
 
 ## Logging out
 
