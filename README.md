@@ -1077,40 +1077,38 @@ Upon completion, please press "Submit" for the review to be logged into the data
 
 For users to view their own reviews, please go to "My Reviews" under the profile tab as previously mentioned.
 
-# 📅 RenowApp Personal Calendar System
+# RenowApp Personal Calendar System
 
-A sophisticated personal calendar system that allows users to visualize and manage their scheduled service requests and offerings in an intuitive calendar interface.
-
-## 🌟 Overview
+## Overview
 
 The Personal Calendar System provides users with a comprehensive view of their scheduled activities in the RenowApp marketplace. Users can see both service requests they've accepted and services they're providing in a color-coded calendar format with detailed daily task views.
 
-## ✨ Features
+## Features
 
-### 📅 Visual Calendar Interface
+### Visual Calendar Interface
 - **Monthly view**: Full month calendar display with navigation
 - **Multi-dot marking**: Support for multiple events per day
 - **Color-coded events**: Different colors for different activity types
 - **Interactive dates**: Tap to select and view detailed information
 
-### 🎯 Task Type Differentiation
+### Task Type Differentiation
 - **Service Requests**: Maroon dots for requests accepted by the user
 - **Service Offerings**: Dark blue dots for user's services accepted by others
 - **Multiple events**: Support for multiple tasks on the same day
 - **Clear labeling**: Each task clearly labeled with type and category
 
-### 📱 Daily Task Details
+### Daily Task Details
 - **Date selection**: Tap any date to view tasks for that day
 - **Task listing**: Detailed list of all tasks for selected date
 - **Task information**: Shows task type, service category, and title
 - **Empty state**: Clear indication when no tasks exist for a date
 
-### 🔄 Real-time Updates
+### Real-time Updates
 - **Automatic refresh**: Updates when screen comes into focus
 - **Pull-to-refresh**: Manual refresh capability
 - **Live data**: Always shows current accepted tasks and services
 
-## 🏗️ Components
+## Components
 
 ### Core Components
 
@@ -1128,7 +1126,7 @@ Dedicated calendar component:
 - Provides customizable theming
 - Supports multi-dot event marking
 
-## 🏛️ Architecture
+## Architecture
 
 ### Component Hierarchy
 ```
@@ -1166,7 +1164,7 @@ Supabase → Filter by User → Group by Date → Render Dots
 Tasks → Build markedDates → Set State → Display Calendar
 ```
 
-## 📊 Calendar Visualization
+## Calendar Visualization
 
 ### Multi-Dot System
 
@@ -1211,7 +1209,7 @@ markedDates={
 }
 ```
 
-## 🔌 Data Integration
+## Data Integration
 
 ### Database Queries
 
@@ -1259,7 +1257,7 @@ dotsByDate[dateStr].push({
 });
 ```
 
-## 📊 State Management
+## State Management
 
 ### Lifecycle Management
 
@@ -1287,7 +1285,7 @@ const handleRefresh = useCallback(async () => {
 }, [fetchCalendarEvents]);
 ```
 
-## 🎨 User Interface
+## User Interface
 
 ### Calendar Styling
 
@@ -1331,7 +1329,7 @@ style={{
 ))}
 ```
 
-## ⚡ Performance Features
+## Performance Features
 
 ### Optimized Data Fetching
 - **Memoized callbacks**: Prevent unnecessary re-renders
@@ -1348,7 +1346,7 @@ style={{
 - **Loading indicators**: Visual feedback during data fetching
 - **Error handling**: Graceful error handling with console logging
 
-## 🚀 Usage
+## Usage
 
 ### Basic Implementation
 
@@ -1391,7 +1389,7 @@ onSelectDate={date => {
 )}
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Color Customization
 
@@ -1424,7 +1422,7 @@ dayjs(selectedDate).format('dddd, DD MMMM YYYY')  // Full date
 dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
 ```
 
-## 🔄 Refresh Mechanisms
+## Refresh Mechanisms
 
 ### Automatic Refresh
 - **Focus-based**: Refreshes when user returns to screen
@@ -1451,7 +1449,7 @@ dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
 - **Clear categorization**: SERVICE vs REQUEST distinction
 - **Detailed information**: Task type, category, and title
 
-## 🐛 Error Handling
+## Error Handling
 
 ```javascript
 // Comprehensive error handling
@@ -1467,7 +1465,7 @@ if (date && typeof date === 'string') {
 }
 ```
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - **Week view**: Alternative calendar layout
 - **Event editing**: Modify task details from calendar
@@ -1478,7 +1476,7 @@ if (date && typeof date === 'string') {
 - **Status indicators**: Visual status for completed/pending tasks
 - **Better UI**: More comprehensive visuals for pending tasks
 
-## 📝 Dependencies
+## Dependencies
 
 ```json
 {
@@ -1490,7 +1488,7 @@ if (date && typeof date === 'string') {
 }
 ```
 
-## 📸 Calendar States
+## Calendar States
 
 ### Empty Calendar
 - Clean monthly view with navigation arrows
