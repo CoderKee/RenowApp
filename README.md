@@ -1079,6 +1079,8 @@ For users to view their own reviews, please go to "My Reviews" under the profile
 
 # RenowApp Personal Calendar System
 
+A sophisticated personal calendar system that allows users to visualize and manage their scheduled service requests and offerings in an intuitive calendar interface.
+
 ## Overview
 
 The Personal Calendar System provides users with a comprehensive view of their scheduled activities in the RenowApp marketplace. Users can see both service requests they've accepted and services they're providing in a color-coded calendar format with detailed daily task views.
@@ -1432,7 +1434,7 @@ dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
 - **Pull-to-refresh**: Swipe down gesture support
 - **Button refresh**: Programmatic refresh capability
 
-## 📱 User Experience Features
+## User Experience Features
 
 ### Visual Feedback
 - **Date highlighting**: Selected dates are highlighted in orange
