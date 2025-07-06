@@ -34,8 +34,7 @@ The Renow app will be equipped with a myriad of features that helps to smoothen 
 - A personal calendar for users to track their schedule
 - Allowing users to write reviews their experience
 - A rating system for users to rate their experience
-- Type matching capability
-- Price matching capablity
+- Type matching capability and Price matching capability through filtering
 - Search function
 
 
