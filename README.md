@@ -1516,3 +1516,97 @@ Users can click on the **Exit** icon at the top right side of their screen. Upon
 
 If the user wishes to log out, please select **Logout**  
 Otherwise, please select **Cancel**
+
+# Software Engineering Practices in ReNow
+
+## Architecture & Design Patterns
+
+### Component-Based Architecture
+- **Modular Design**: The application is structured using React Native's component-based architecture, with clear separation of concerns between screens, components, and utilities.
+- **Reusable Components**: Common UI elements like `ItemCard`, `EditableItemCard`, and `FilterModal` are built as reusable components, promoting DRY (Don't Repeat Yourself) principles.
+- **Custom Components**: Heavy reliance on custom components instead of native React components ensures consistent cross-platform experience.
+
+### Navigation Architecture
+- **Tab-based Navigation**: Material Top Tab Navigator and Bottom Tab Navigator provide intuitive user experience
+- **Stack Navigation**: Proper screen management with stack navigation for detailed views
+- **Centralized Navigation**: Clean navigation structure with proper parameter passing between screens
+
+### State Management
+- **React Hooks**: Extensive use of `useState`, `useEffect`, `useCallback`, and `useFocusEffect` for efficient state management
+- **Context API**: Global user context for managing user authentication state across the application
+- **Proper State Lifecycle**: Clear state initialization, updates, and cleanup
+
+## Code Organization & Structure
+
+### File Structure
+```
+ReNow/
+├── screens/
+│   ├── HomeScreen.js
+│   ├── PostingScreen.js
+│   ├── ProfileScreen.js
+│   └── ListingScreen.js
+├── components/
+│   ├── ItemCard.js
+│   ├── EditableItemCard.js
+│   └── FilterModal.js
+├── tabs/
+│   ├── HomeRequest.js
+│   ├── HomeService.js
+│   └── listingTabs/
+└── utils/
+```
+
+### Separation of Concerns
+- **Screen Logic**: Each screen handles its own business logic and state
+- **UI Components**: Presentation components are separated from business logic
+- **Data Layer**: Supabase integration abstracted into reusable functions
+
+## Error Handling & Validation
+
+### Input Validation
+- **Form Validation**: Comprehensive validation for all user inputs (username length, password requirements, required fields)
+- **Real-time Validation**: Immediate feedback for invalid inputs
+- **Error Messages**: Clear, user-friendly error messages for validation failures
+
+### Exception Handling
+```javascript
+// Example error handling pattern
+try {
+  const { data, error } = await supabase.from('Listings').select('*');
+  if (error) {
+    console.error('Database error:', error);
+    // Handle error appropriately
+  }
+} catch (exception) {
+  console.error('Unexpected error:', exception);
+}
+```
+
+### Graceful Degradation
+- **Loading States**: Proper loading indicators during data fetching
+- **Empty States**: Clear messaging when no data is available
+- **Fallback UI**: Graceful handling of missing or corrupted data
+
+## Performance Optimization
+
+### Memory Management
+- **Pagination**: Implementation of pagination to handle large datasets efficiently
+- **Lazy Loading**: Loading data in chunks (5 items at a time) to improve performance
+- **State Cleanup**: Proper cleanup of state and effects to prevent memory leaks
+
+### Efficient Data Fetching
+- **Conditional Queries**: Only fetching data when necessary
+- **Memoization**: Use of `useCallback` to prevent unnecessary re-renders
+- **Focus-based Updates**: Refreshing data only when screens come into focus
+
+### Caching Strategy
+- **Local State**: Effective use of local component state for temporary data
+- **Database Optimization**: Efficient Supabase queries with proper filtering and sorting
+
+### Version Control
+- **Incremental Development**: Feature-based development with clear milestones
+- **Branching & Pull Requests**: Allows for concurrent feature-based development with minimum side effects on other versions
+- **Developer Notes**: Clear documentation for future developers
+
+# Testing in ReNow
