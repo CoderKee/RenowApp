@@ -158,7 +158,7 @@ After successfully filling in all 3 text fields users will be redirected to a **
 
 The interface of the sign up screen is shown below for user reference:
 
-![Sign Up Screen](READMEimages/SignupPage.png)
+<img src="READMEimages/SignupPage.png" alt="Sign Up Screen" style="width:50%; height:50%;" />
 
 ## Developers' note
 
@@ -184,7 +184,7 @@ After successfully filling in the text inputs, users should click on the **Log i
 
 The interface of the log in screen is shown below for user reference:
 
-![Log In Screen](READMEimages/LoginPage.png)
+<img src="READMEimages/LoginPage.png" alt="Log In Screen" style="width:50%; height:50%;" />
 
 ---
 # Main tabs of Renow
@@ -199,6 +199,7 @@ There is a total of 4 main tabs in Renow
 Users should be able to see the available options at the bottom of their screen.
 
 The interface for the main tabs is shown for user reference:
+
 ![Main tabs](READMEimages/AllTabs.png)
 
 # Home
@@ -251,8 +252,7 @@ If the user wishes to view the Listing, they may click on the **View** button to
 
 In the detailed view, the user may see the previously mentioned information with an addition of:
 - An image carousel that contains images uploaded by the poster
-- Price of the service
-- Username of the author
+- Clickable username of the author
 - Detailed Description
 - A calendar for the user to choose a date
 - An accept button
@@ -268,7 +268,7 @@ If the user views their own Listing in detail, the accept button is greyed out a
 
 The interface for Item Details is shown below for user reference:
 
-![Item Details](READMEimages/ItemDetails.png)
+<img src="READMEimages/ItemDetails.png" alt="Item Details" style="width:50%; height:50%;" />
 
 ## Error handling
 
@@ -844,7 +844,8 @@ Developers' note: **Create Listing** 's file is located in PostingScreen.js
 
 
 The interface for the Create Listing Tab will be shown below for user reference:
-![Create Listing](READMEimages/CreateListingTab.png)
+
+<img src="READMEimages/CreateListingTab.png" alt="Create Listing" style="width:50%; height:50%;" />
 
 ## Purpose and Key Features
 
@@ -990,11 +991,13 @@ For creating, there is no backward navigation. However, main tabs will be presen
 The different interfaces will be displayed below for user reference:
 
 ### Creating
-![Creating](READMEimages/Creating.png)
+
+<img src="READMEimages/Creating.png" alt="Creating" style="width:50%; height:50%;" />
 
 ### Editing
-![Editing](READMEimages/Editing.png)
-    
+
+<img src="READMEimages/Editing.png" alt="Editing" style="width:50%; height:50%;" />
+
 ---
 
 # Profile
@@ -1008,7 +1011,8 @@ The profile tab will provide the following details:
 - A personal calendar for users to track their schedule
 
 The interface for the profile tab will be displayed below for user reference:
-![Profile Tab](READMEimages/ProfileTab.png)
+
+<img src="READMEimages/ProfileTab.png" alt="Profile Tab" style="width:50%; height:50%;" />
 
 ## Layout
 
@@ -1028,7 +1032,8 @@ This page uses the same Item Card as the Home Tab, however, instead of "View Det
 The mechanism for how the item cards are displayed is the same as that in Home tab.
 
 The interface for the listings will be displayed below for user reference:
-![Completed Listings](READMEimages/CompletedListingView.png)
+
+<img src="READMEimages/CompletedListingView.png" alt="Completed Listings" style="width:50%; height:50%;" />
 
 Upon clicking on "View Receipt" button, the user will be directed to a "Proof of Completion" page.
 
@@ -1046,7 +1051,8 @@ The lay out for the Proof of Completion is as follows:
 - The date of completion
 
 The interface for the layout of the Proof of Completion will be displayed below for user reference:
-![Proof of Completion](READMEimages/ProofofCompletion.png)
+
+<img src="READMEimages/ProofofCompletion.png" alt="Proof of Completion" style="width:50%; height:50%;" />
 
 ### My Reviews
 
@@ -1058,7 +1064,8 @@ The pop up modal will show the following:
 - Past reviews of the user
 
 The pop up modal will be displayed below for user reference:
-![My Reviews](READMEimages/MyReviews.png)
+
+<img src="READMEimages/MyReviews.png" alt="My Reviews" style="width:50%; height:50%;" />
 
 #### Reviews and Ratings
 
@@ -1068,7 +1075,7 @@ To write a review, users should click on the "Write a Review" button.
 
 A pop up modal will be displayed as shown:
 
-![Review Modal](READMEimages/ReviewModal.png)
+<img src="READMEimages/ReviewModal.png" alt="Review Modal" style="width:50%; height:50%;" />
 
 Users can provide a rating from 1 to 5 to their reviewee.
 
@@ -1078,40 +1085,40 @@ Upon completion, please press "Submit" for the review to be logged into the data
 
 For users to view their own reviews, please go to "My Reviews" under the profile tab as previously mentioned.
 
-# 📅 RenowApp Personal Calendar System
+# RenowApp Personal Calendar System
 
 A sophisticated personal calendar system that allows users to visualize and manage their scheduled service requests and offerings in an intuitive calendar interface.
 
-## 🌟 Overview
+## Overview
 
 The Personal Calendar System provides users with a comprehensive view of their scheduled activities in the RenowApp marketplace. Users can see both service requests they've accepted and services they're providing in a color-coded calendar format with detailed daily task views.
 
-## ✨ Features
+## Features
 
-### 📅 Visual Calendar Interface
+### Visual Calendar Interface
 - **Monthly view**: Full month calendar display with navigation
 - **Multi-dot marking**: Support for multiple events per day
 - **Color-coded events**: Different colors for different activity types
 - **Interactive dates**: Tap to select and view detailed information
 
-### 🎯 Task Type Differentiation
+### Task Type Differentiation
 - **Service Requests**: Maroon dots for requests accepted by the user
 - **Service Offerings**: Dark blue dots for user's services accepted by others
 - **Multiple events**: Support for multiple tasks on the same day
 - **Clear labeling**: Each task clearly labeled with type and category
 
-### 📱 Daily Task Details
+### Daily Task Details
 - **Date selection**: Tap any date to view tasks for that day
 - **Task listing**: Detailed list of all tasks for selected date
 - **Task information**: Shows task type, service category, and title
 - **Empty state**: Clear indication when no tasks exist for a date
 
-### 🔄 Real-time Updates
+### Real-time Updates
 - **Automatic refresh**: Updates when screen comes into focus
 - **Pull-to-refresh**: Manual refresh capability
 - **Live data**: Always shows current accepted tasks and services
 
-## 🏗️ Components
+## Components
 
 ### Core Components
 
@@ -1129,7 +1136,7 @@ Dedicated calendar component:
 - Provides customizable theming
 - Supports multi-dot event marking
 
-## 🏛️ Architecture
+## Architecture
 
 ### Component Hierarchy
 ```
@@ -1167,7 +1174,7 @@ Supabase → Filter by User → Group by Date → Render Dots
 Tasks → Build markedDates → Set State → Display Calendar
 ```
 
-## 📊 Calendar Visualization
+## Calendar Visualization
 
 ### Multi-Dot System
 
@@ -1212,7 +1219,7 @@ markedDates={
 }
 ```
 
-## 🔌 Data Integration
+## Data Integration
 
 ### Database Queries
 
@@ -1260,7 +1267,7 @@ dotsByDate[dateStr].push({
 });
 ```
 
-## 📊 State Management
+## State Management
 
 ### Lifecycle Management
 
@@ -1288,7 +1295,7 @@ const handleRefresh = useCallback(async () => {
 }, [fetchCalendarEvents]);
 ```
 
-## 🎨 User Interface
+## User Interface
 
 ### Calendar Styling
 
@@ -1332,7 +1339,7 @@ style={{
 ))}
 ```
 
-## ⚡ Performance Features
+## Performance Features
 
 ### Optimized Data Fetching
 - **Memoized callbacks**: Prevent unnecessary re-renders
@@ -1349,7 +1356,7 @@ style={{
 - **Loading indicators**: Visual feedback during data fetching
 - **Error handling**: Graceful error handling with console logging
 
-## 🚀 Usage
+## Usage
 
 ### Basic Implementation
 
@@ -1392,7 +1399,7 @@ onSelectDate={date => {
 )}
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Color Customization
 
@@ -1425,7 +1432,7 @@ dayjs(selectedDate).format('dddd, DD MMMM YYYY')  // Full date
 dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
 ```
 
-## 🔄 Refresh Mechanisms
+## Refresh Mechanisms
 
 ### Automatic Refresh
 - **Focus-based**: Refreshes when user returns to screen
@@ -1435,7 +1442,7 @@ dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
 - **Pull-to-refresh**: Swipe down gesture support
 - **Button refresh**: Programmatic refresh capability
 
-## 📱 User Experience Features
+## User Experience Features
 
 ### Visual Feedback
 - **Date highlighting**: Selected dates are highlighted in orange
@@ -1452,7 +1459,7 @@ dayjs(item.selected_date).format('YYYY-MM-DD')    // Calendar format
 - **Clear categorization**: SERVICE vs REQUEST distinction
 - **Detailed information**: Task type, category, and title
 
-## 🐛 Error Handling
+## Error Handling
 
 ```javascript
 // Comprehensive error handling
@@ -1468,7 +1475,7 @@ if (date && typeof date === 'string') {
 }
 ```
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - **Week view**: Alternative calendar layout
 - **Event editing**: Modify task details from calendar
@@ -1479,7 +1486,7 @@ if (date && typeof date === 'string') {
 - **Status indicators**: Visual status for completed/pending tasks
 - **Better UI**: More comprehensive visuals for pending tasks
 
-## 📝 Dependencies
+## Dependencies
 
 ```json
 {
@@ -1491,7 +1498,7 @@ if (date && typeof date === 'string') {
 }
 ```
 
-## 📸 Calendar States
+## Calendar States
 
 ### Empty Calendar
 - Clean monthly view with navigation arrows
