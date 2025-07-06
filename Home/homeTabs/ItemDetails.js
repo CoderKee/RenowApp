@@ -8,6 +8,7 @@ import  Icon  from 'react-native-vector-icons/MaterialIcons';
 import Calendar from '../components/Calendar';
 import dayjs from 'dayjs';
 import ReviewDisplay from '../components/ReviewDisplay';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { 
     ScrollView, 
     StyleSheet, 
