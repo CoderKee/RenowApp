@@ -37,15 +37,71 @@ The Renow app will be equipped with a myriad of features that helps to smoothen 
 - Type matching capability and Price matching capability through filtering
 - Search function
 
-
-**These set of features are tentative**
-
 ## Design planning
 
 Renow aims to take inspiration from successful marketplace applications (such as Shopee, Carousell etc.) to provide our users with the best experience when using our app.
 
 We also plan to rely heavily on Custom components instead of native react components to ensure that both Android and IOS users will enjoy the same experience when using our app.
 
+---
+
+# Table of Contents
+
+## Getting Started
+- Accessing the App
+  - Android Users
+  - iOS Users
+
+## User Authentication
+- Signing Up
+- Logging In
+
+## Main Navigation
+- Main Tabs of ReNow
+  - Home
+  - Listing
+  - Create Listing
+  - Profile
+
+## Home Screen
+- Overview
+- Requests
+- Services
+
+## Filtering System
+- Search bar
+- Price Matching
+- Type Matching
+
+## Listing Management
+- Listing Screen Overview
+- My Listing
+- Accepted Listing
+- Claimed Listing
+
+## Create Listing
+- Inputs overview
+- Image upload
+- Scheduling
+
+## Profile Management
+- Profile Overview
+- Completed Listings
+- My Reviews
+- Personal Calendar
+- Logging Out
+
+
+## Software Engineering Practices
+- Architecture & Design Patterns
+- Code Organization & Structure
+- Error Handling & Validation
+- Performance Optimization
+
+## Testing
+- User testing
+- Unit testing
+  
 ---
 
 # Accessing the App
@@ -1517,6 +1573,8 @@ Users can click on the **Exit** icon at the top right side of their screen. Upon
 If the user wishes to log out, please select **Logout**  
 Otherwise, please select **Cancel**
 
+---
+
 # Software Engineering Practices in ReNow
 
 ## Architecture & Design Patterns
@@ -1609,4 +1667,113 @@ try {
 - **Branching & Pull Requests**: Allows for concurrent feature-based development with minimum side effects on other versions
 - **Developer Notes**: Clear documentation for future developers
 
+--- 
+
 # Testing in ReNow
+
+## User testing
+
+We conducted testing from both client side (APK app) and Developer side (Expo Go) by going through the user flow and identifying potential bugs or obstructions that users might face
+
+During the course of our testing, we have identified the following bugs and addressed them as follows:
+
+### Post Spamming
+
+Previously, before the implementaiton of the Image Upload feature, posting can be done instantly at the click of the button.
+
+However, with the Image upload capability, posting now requires 1-2s. During this timeframe, user can repeatedly click on the Post button and re-submit their posts again. This will flood our database and marketplace with new postings and constituted a serious concern for the app.
+
+Hence, after identifying this potential bug, we have implemented a LoadingScreen modal that restricts user movement during that posting timeframe.
+
+Upon clicking "Post" or "Update" (if users are editing their listing), the modal will pop-up, blocking user from repeatedly clicking on the "Post" or "Update"  button.
+
+The implementation of the Loading Screen modal is as shown below:
+
+```javascript
+import { Modal, View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+
+const LoadingScreen = ({ visible, text }) => {
+  return (
+    <Modal
+      transparent={true}
+      animationType="fade"
+      visible={visible}
+    >
+      <View style={styles.container}>
+        <View style={styles.wrapper}>
+          <ActivityIndicator size="large" color="#ffffff" />
+          {text && <Text style={styles.loadingText}>{text}</Text>}
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({  
+  container: { //This is for the entire loading screen background
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: '#00000000', // 00 at the end represents opacity, users should not be able to click any other buttons during loading screen
+  },
+  wrapper: { //for the box where the activity indicator lies on
+    backgroundColor: '#00000080', 
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#fff',
+    textAlign: 'center',
+  },
+});
+
+export default LoadingScreen;
+```
+
+### Inconsistent UI between Android and IOS users
+
+When testing using an Android emulator and Expo Go downloaded on an IOS device, we noticed that certain React Native pre-built components such as "Button" may display differently on different OS.
+
+Hence, to standardise user experience across both Android and IOS devices, we created our own custom components such as CustomTextInput and CustomButton.
+
+The implementation of one of our custom component, Custom Button is shown below:
+
+```javascript
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity
+} from "react-native";
+
+const CustomButton = ({ onPress, text, color }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.container, { backgroundColor: color }]}>
+      <Text style={styles.text}>{text}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 20,
+    width: '80%',
+    padding: 15,
+    marginVertical: 5,
+    alignItems: 'center',
+  },
+  text: {
+    color: 'white',
+    fontWeight: 'bold',
+  }
+});
+
+export default CustomButton;
+```
+
+## Unit testing
