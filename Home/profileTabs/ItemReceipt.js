@@ -16,6 +16,7 @@ const ItemReceipt = ({ route, navigation }) => {
   const { item } = route.params;
   const [posterUsername, setPosterUsername] = useState('');
   const [reviewVisible, setReviewVisible] = useState(false);
+  const [reviewWritten, setReviewWritten] = useState(false); // Add this state
 
   const fetchPosterUserName = useCallback(async () => {
       if (!item.user_id) return;
@@ -35,15 +36,22 @@ const ItemReceipt = ({ route, navigation }) => {
       fetchPosterUserName();
   }, [fetchPosterUserName]);
 
+  useEffect(() => {
+    const written = posterUsername === item.accepted_by
+      ? item.accept_reviewed
+      : item.poster_reviewed;
+    setReviewWritten(written);
+  }, [posterUsername, item.accepted_by, item.accept_reviewed, item.poster_reviewed]);
+
   function formatDate(timeStamp) {
     const date = new Date(timeStamp);
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
-  // Determine if review is written
-  const written = posterUsername === item.accepted_by
-    ? item.accept_reviewed
-    : item.poster_reviewed;
+  const handleReviewWritten = () => {
+    setReviewWritten(true);
+    setReviewVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -83,14 +91,17 @@ const ItemReceipt = ({ route, navigation }) => {
         </ScrollView>
         <View style={styles.accept}>
           <CustomButton
-            text={written ? "Review Written" : "Write a Review"}
-            color={written ? "gray" : "maroon"}
-            onPress={written ? null : () => setReviewVisible(true)}
+            text={reviewWritten ? "Review Written" : "Write a Review"}
+            color={reviewWritten ? "gray" : "maroon"}
+            onPress={reviewWritten ? null : () => setReviewVisible(true)}
           />
         </View>
         <ReviewModal
           visible={reviewVisible}
-          onClose={() => setReviewVisible(false)}
+          onClose={() => {
+            setReviewVisible(false);
+          }}
+          onReviewWritten={handleReviewWritten} 
           item={item}
           posterUsername={posterUsername}
         />
