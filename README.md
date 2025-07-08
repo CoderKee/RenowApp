@@ -1582,6 +1582,10 @@ Users can click on the **Exit** icon at the top right side of their screen. Upon
 
 ![Log out](READMEimages/logout.png)
 
+
+If the user wishes to log out, please select **Logout**  
+Otherwise, please select **Cancel**
+
 ---
 
 # Software Engineering Practices in ReNow
@@ -1788,5 +1792,3 @@ export default CustomButton;
 ## Unit testing
 
 
-If the user wishes to log out, please select **Logout**  
-Otherwise, please select **Cancel**
