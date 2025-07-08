@@ -1,10 +1,9 @@
-import { use, useState } from 'react';
+import { useState } from 'react';
 import {
   Modal,
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -12,7 +11,7 @@ import ReviewInput from './ReviewInput';
 import { useUser } from '../globalContext/UserContext';
 import { supabase } from '../../server/supabase.js';
 
-const ReviewModal = ({ visible, onClose, item, posterUsername }) => {
+const ReviewModal = ({ visible, onClose, onReviewWritten, item, posterUsername }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
 
@@ -32,27 +31,35 @@ const ReviewModal = ({ visible, onClose, item, posterUsername }) => {
             review: review,
         };
     
-    const { error1 } = await supabase
+    const { error: error1 } = await supabase
         .from('Reviews')
         .insert([info]);
+    
     let error2;
     if (username == posterUsername) {
-        const { error2 } = await supabase
+        const { error: updateError } = await supabase
             .from("Listings")
             .update({ poster_reviewed: true })
             .eq("listing_id", item.listing_id);
+        error2 = updateError;
     } else {
-        const { error2 } = await supabase
+        const { error: updateError } = await supabase
             .from("Listings")
             .update({ accept_reviewed: true })
             .eq("listing_id", item.listing_id);
+        error2 = updateError;
     }
+    
     if (error1 || error2) {
-        console.error('Error submitting review:', error);
+        console.error('Error submitting review:', error1 || error2);
+        return;
+    }
+
+    if (onReviewWritten) {
+        onReviewWritten();
     }
     setRating(0);
     setReview("");
-    onClose();
   };
 
   const handleCancel = () => {
@@ -60,6 +67,7 @@ const ReviewModal = ({ visible, onClose, item, posterUsername }) => {
     setReview("");
     onClose();
   };
+  
   const {username} = useUser();
   const targetUsername = posterUsername == username ? item.accepted_by : posterUsername;
 
