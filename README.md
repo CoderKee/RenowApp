@@ -1789,4 +1789,40 @@ const styles = StyleSheet.create({
 export default CustomButton;
 ```
 
+### Slow Loading
+
+When testing the app in both the emulator and android devices, we noticed that loading of the item listings took quite a bit of time, enough to annoy users. 
+
+Hence, we implemented a simple memoization system so that the app does not keep reloading and refreshing every item upon changing pages. Now it only loads the changes to the items.
+
+Previously, refreshing was implement with a simple reloading of all items
+
+``` javascript
+const handleRefresh = async () => {
+    setRefreshing(true);
+    setNoMoreData(false);
+    setPage(0);
+    setItems([]);
+    await fetchItems(0, filters, searchText);
+    setRefreshing(false);
+  };
+```
+Now, we use an extra useCallback to memoize certain items loaded into the page
+
+``` javascript
+const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setNoMoreData(false);
+    setPage(0);
+    setItems([]);
+    await fetchItems(0, filters, searchText);
+    setRefreshing(false);
+  }, [filters, searchText]);
+```
+Doing this makes the refreshing and loading into the page much faster.
+
+### Filter Button Disappearing
+
+Currently there is a bug where the filter button disappears whenever we type some things into the searchbar.
+
 ## Unit testing
