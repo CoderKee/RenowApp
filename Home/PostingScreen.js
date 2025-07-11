@@ -149,7 +149,7 @@ const PostingScreen = ({ route, navigation }) => {
         });
 
       if (error) {
-        console.log("Error uploading:", error);
+      //  console.log("Error uploading:", error);
         return null;
       }
 

@@ -1826,3 +1826,156 @@ Doing this makes the refreshing and loading into the page much faster.
 Currently there is a bug where the filter button disappears whenever we type some things into the searchbar.
 
 ## Unit testing
+
+We also performed unit testing on isolated components and functions to ensure that it functions the way that it is expected to be.
+
+Our testing includes the following:
+
+### Custom components
+
+Since we're replacing many pre-built components with custom ones, we need to perform rigorous testing to ensure that our custom components serve its capability well.
+
+The following test cases for our custom button is as shown:
+
+```javascript
+import { render, fireEvent } from '@testing-library/react-native';
+import CustomButton from '../Home/components/CustomButton';
+
+describe('CustomButton', () => {
+  it('Correct Text', () => {
+    const { getByText } = render(
+      <CustomButton text="Test" onPress={() => {}} color="blue" />
+    );
+
+    expect(getByText('Test')).toBeTruthy();
+  });
+
+  it('calls onPress', () => {
+    const mockPress = jest.fn();
+    const { getByText } = render(
+      <CustomButton text="Test" onPress={mockPress} color="green" />
+    );
+
+    fireEvent.press(getByText('Test'));
+
+    expect(mockPress).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+### Review Modal
+
+We conducted unit testing on our isolated Review Modal to ensure that users can only submit a review and rating successfully after providing a rating.
+
+We also conducted testing to ensure smooth UI experience for users
+
+The test cases employed are as shown:
+
+```javascript
+
+import { render, fireEvent } from '@testing-library/react-native';
+import ReviewModal from '../path/to/ReviewModal';
+
+
+jest.mock('../globalContext/UserContext', () => ({
+  useUser: () => ({ username: 'testuser' }),
+}));
+
+jest.mock('./ReviewInput', () => {
+  return ({ value, setValue }) => (
+    <input
+      testID="review-input"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      placeholder="Write your review here..."
+    />
+  );
+});
+
+describe('ReviewModal', () => {
+  const item = {
+    listing_id: '123',
+    accepted_by: 'acceptedUser',
+  };
+  const posterUsername = 'posterUser';
+  const onCloseMock = jest.fn();
+  const onReviewWrittenMock = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders and shows correct target username', () => {
+    const { getByText } = render(
+      <ReviewModal
+        visible={true}
+        onClose={onCloseMock}
+        onReviewWritten={onReviewWrittenMock}
+        item={item}
+        posterUsername={posterUsername}
+      />
+    );
+
+    expect(getByText('Writing a review for posterUser')).toBeTruthy();
+  });
+
+  it('star buttons update rating state', () => {
+    const { getAllByRole, getByTestId } = render(
+      <ReviewModal
+        visible={true}
+        onClose={onCloseMock}
+        onReviewWritten={onReviewWrittenMock}
+        item={item}
+        posterUsername={posterUsername}
+      />
+    );
+
+    const stars = getAllByRole('button');
+    fireEvent.press(stars[2]);
+
+
+    const submitButton = getByTestId('submit-button');
+    expect(submitButton.props.accessibilityState.disabled).toBe(false);
+  });
+
+  it('submit button is disabled when no rating or review', () => {
+    const { getByTestId } = render(
+      <ReviewModal
+        visible={true}
+        onClose={onCloseMock}
+        onReviewWritten={onReviewWrittenMock}
+        item={item}
+        posterUsername={posterUsername}
+      />
+    );
+
+    const submitButton = getByTestId('submit-button');
+    expect(submitButton.props.accessibilityState.disabled).toBe(true);
+  });
+
+  it('calls onClose and resets rating/review on cancel', () => {
+    const { getByText, getByTestId } = render(
+      <ReviewModal
+        visible={true}
+        onClose={onCloseMock}
+        onReviewWritten={onReviewWrittenMock}
+        item={item}
+        posterUsername={posterUsername}
+      />
+    );
+
+    const stars = getAllByRole('button');
+    fireEvent.press(stars[4]); 
+
+    const cancelButton = getByText('Cancel');
+    fireEvent.press(cancelButton);
+
+    expect(onCloseMock).toHaveBeenCalledTimes(1);
+
+    const submitButton = getByTestId('submit-button');
+    expect(submitButton.props.accessibilityState.disabled).toBe(true);
+  });
+});
+```
+
+
