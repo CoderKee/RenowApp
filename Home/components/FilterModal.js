@@ -20,7 +20,7 @@ const SERVICE_TYPES = [
 ];
 
 const MIN_PRICE = 0;
-const MAX_PRICE = 1000;
+const MAX_PRICE = 100000;
 
 const FilterModal = ({ visible, onClose, filters, setFilters }) => {
   const [localFilters, setLocalFilters] = useState(filters);

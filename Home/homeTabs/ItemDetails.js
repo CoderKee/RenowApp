@@ -18,6 +18,7 @@ import {
     RefreshControl,
     TouchableOpacity,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ItemDetails = ({ route, navigation }) => {
     const { item } = route.params;
@@ -156,7 +157,7 @@ const ItemDetails = ({ route, navigation }) => {
             >
                 
                 {accepted && (
-                    <Text style={{ textAlign: 'flex-start', fontSize: 18, color: 'black', fontWeight: 'bold' }}>
+                    <Text style={{ textAlign: 'flex-start', fontSize: 18, color: 'green', fontWeight: 'bold' }}>
                         This listing has been accepted by {item.accepted_by}
                     </Text>
                 )}
@@ -217,10 +218,8 @@ const ItemDetails = ({ route, navigation }) => {
                     <TouchableOpacity
                         style={{
                             alignSelf: 'flex-start',
-                            paddingHorizontal: 8,
                             paddingVertical: 2,
                             borderRadius: 8,
-                            backgroundColor: '#E3F0FF', // subtle background
                             marginVertical: 2,
                         }}
                         onPress={() => setReviewDisplay(true)}
@@ -441,7 +440,10 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     price: {
-        color: 'green'
+        color: 'green',
+        fontWeight: 'bold',
+        marginVertical: 5,
+        fontSize: 16,
     },
     font: {
         color: 'black',
@@ -450,6 +452,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: 'black',
+        marginTop: 10,
     },
 
     accept: {
