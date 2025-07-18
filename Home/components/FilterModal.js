@@ -55,7 +55,7 @@ const FilterModal = ({ visible, onClose, filters, setFilters }) => {
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.overlay}>
-        <View style={styles.modal}>
+        <View style={styles.modal} testID='filter-modal'>
           <Text style={styles.title}>Filter Listings</Text>
           {/* Service Type */}
           <Text style={styles.label}>Service Type:</Text>
@@ -75,6 +75,7 @@ const FilterModal = ({ visible, onClose, filters, setFilters }) => {
           {/* Price Range */}
           <Text style={styles.label}>Min Price: ${minPrice}</Text>
           <Slider
+            testID='min-price-slider'
             minimumValue={MIN_PRICE}
             maximumValue={maxPrice}
             value={minPrice}
@@ -86,6 +87,7 @@ const FilterModal = ({ visible, onClose, filters, setFilters }) => {
           />
           <Text style={styles.label}>Max Price: ${maxPrice}</Text>
           <Slider
+            testID='max-price-slider'
             minimumValue={minPrice}
             maximumValue={MAX_PRICE}
             value={maxPrice}
@@ -98,7 +100,7 @@ const FilterModal = ({ visible, onClose, filters, setFilters }) => {
 
           <View style={styles.buttonRow}>
             <View style={styles.buttonLeft}>
-                <CustomButton text="Cancel" color="#ccc" onPress={onClose} />
+                <CustomButton text="Cancel" color="#ccc" onPress={onClose} testID='cancel-button' />
             </View>
             <View style={styles.buttonCenter}>
                 <CustomButton text="Clear" color="#aaa" onPress={clearFilters} />

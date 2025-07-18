@@ -23,6 +23,7 @@ const Calendar = ({
 
   return (
     <RNCalendar
+      testID='calendar-component'
       markedDates={markedDates}
       markingType="simple"
       disableAllTouchEventsForDisabledDays={true}
@@ -31,6 +32,7 @@ const Calendar = ({
         const isSelected = selectedDate === date.dateString;
         return (
           <TouchableOpacity
+            
             disabled={!isAvailable}
             onPress={() => isAvailable && onSelectDate(date.dateString)}
             style={{

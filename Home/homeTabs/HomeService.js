@@ -116,11 +116,13 @@ const HomeService = () => {
           <TextInput
             style={styles.searchInput}
             placeholder="Search listings..."
+            placeholderTextColor={'black'}
             value={searchText}
             onChangeText={setSearchText}
           />
           {searchText.length > 0 && (
             <TouchableOpacity
+              testID='clearSearchButton'
               style={{
                 position: 'absolute',
                 right: 12,
@@ -137,6 +139,7 @@ const HomeService = () => {
           )}
         </View>
         <TouchableOpacity
+          testID='filterButton'
           style={styles.filterButton}
           onPress={() => setFilterModalVisible(true)}
         >
@@ -187,6 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     backgroundColor: '#fff',
+    color: 'grey',
   },
   filterButton: {
     marginLeft: 8,
