@@ -186,14 +186,14 @@ const ProfileScreen = ({ navigation }) => {
       <View style={{ width: '90%', marginTop: 20 }}>
       {selectedDate && (
         <>
-          <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: 'black' }}>
             Tasks for {dayjs(selectedDate).format('dddd, DD MMMM YYYY')}:
           </Text>
           {tasksForSelectedDate.length === 0 ? (
-            <Text style={{ color: 'gray' }}>No tasks for this day.</Text>
+            <Text style={{ color: 'black' }}>No tasks for this day.</Text>
           ) : (
             tasksForSelectedDate.map((task, idx) => (
-              <Text key={idx} style={{ fontSize: 16, marginBottom: 5 }}>
+              <Text key={idx} style={{ fontSize: 16, marginBottom: 5, color: 'black' }}>
                 {task.typeLabel} - {task.type} - {task.title}
               </Text>
             ))

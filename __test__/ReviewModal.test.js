@@ -1,13 +1,13 @@
 
 import { render, fireEvent } from '@testing-library/react-native';
-import ReviewModal from '../path/to/ReviewModal';
+import ReviewModal from '../Home/components/ReviewModal';
 
 
-jest.mock('../globalContext/UserContext', () => ({
+jest.mock('../Home/globalContext/UserContext', () => ({
   useUser: () => ({ username: 'testuser' }),
 }));
 
-jest.mock('./ReviewInput', () => {
+jest.mock('../Home/components/ReviewInput', () => {
   return ({ value, setValue }) => (
     <input
       testID="review-input"

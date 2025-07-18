@@ -115,11 +115,14 @@ const HomeRequest = () => {
           <TextInput
             style={styles.searchInput}
             placeholder="Search listings..."
+            placeholderTextColor={'gray'}
             value={searchText}
             onChangeText={setSearchText}
+            
           />
           {searchText.length > 0 && (
             <TouchableOpacity
+              testID="clearSearchButton"
               style={{
                 position: 'absolute',
                 right: 12,
@@ -136,6 +139,7 @@ const HomeRequest = () => {
           )}
         </View>
         <TouchableOpacity
+          testID="filterButton"
           style={styles.filterButton}
           onPress={() => setFilterModalVisible(true)}
         >
@@ -186,6 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     backgroundColor: '#fff',
+    color: 'black', 
   },
   filterButton: {
     marginLeft: 8,
@@ -198,20 +203,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     gap: 10,
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 8,
-    backgroundColor: '#fff',
-  },
-  filterButton: {
-    marginLeft: 8,
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#F3E6E6',
   },
   container: {
     flex: 1,
