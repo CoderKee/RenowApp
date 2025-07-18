@@ -1831,6 +1831,239 @@ We also performed unit testing on isolated components and functions to ensure th
 
 Our testing includes the following:
 
+### Calendar
+
+Here we test that the calendar gives the correct output for the buttons that we press and also gives out the correct dates.
+
+```javascript
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import Calendar from '../Home/components/Calendar';
+
+describe('Calendar', () => {
+  it('renders calendar', () => {
+    const { getByTestId } = render(<Calendar />);
+    expect(getByTestId('calendar-component')).toBeTruthy();
+  });
+
+  it('correct date is recorded', () => {
+    const onDateSelect = jest.fn();
+    const availableDates = ['2025-07-15', '2025-07-18', '2025-07-19'];
+    const { getByText } = render(
+      <Calendar
+        availableDates={availableDates}
+        onSelectDate={onDateSelect}
+      />
+    );
+    fireEvent.press(getByText('15'));
+    expect(onDateSelect).toHaveBeenCalledWith('2025-07-15');
+  });
+});
+```
+### FilterModal
+
+For the filtering modal, we test the following:
+- It renders
+- Buttons works they should
+- Filters apply as they should
+
+```javascript
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import FilterModal from '../Home/components/FilterModal';
+
+// Mock DropDownPicker
+jest.mock('react-native-dropdown-picker', () => {
+  return ({ setValue, value, items, ...props }) => (
+    <select
+      testID="type-dropdown"
+      value={value || ''}
+      onChange={e => setValue(() => e.target.value)}
+    >
+      {items.map(opt => (
+        <option key={opt.label} value={opt.value || ''}>{opt.label}</option>
+      ))}
+    </select>
+  );
+});
+
+describe('FilterModal', () => {
+  it('renders when visible', () => {
+    const { getByTestId } = render(
+      <FilterModal visible={true} filters={{}} setFilters={jest.fn()} onClose={jest.fn()} />
+    );
+    expect(getByTestId('filter-modal')).toBeTruthy();
+  });
+
+  it('calls setFilters when apply button is pressed', () => {
+    const setFilters = jest.fn();
+    const { getByTestId, getByText } = render(
+        <FilterModal visible={true} filters={{}} setFilters={setFilters} onClose={jest.fn()} />
+    );
+    fireEvent(getByTestId('min-price-slider'), 'valueChange', 10);
+    fireEvent.press(getByText('Apply'));
+    expect(setFilters).toHaveBeenCalled();
+  });
+
+  it('calls onClose when close button is pressed', () => {
+    const onClose = jest.fn();
+    const { getByTestId } = render(
+      <FilterModal visible={true} filters={{}} setFilters={jest.fn()} onClose={onClose} />
+    );
+    fireEvent.press(getByTestId('cancel-button'));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('applies correct type and price filters', () => {
+    const setFilters = jest.fn();
+    const { getByTestId, getByText } = render(
+      <FilterModal
+        visible={true}
+        filters={{ type: null, minPrice: 0, maxPrice: 100000 }}
+        setFilters={setFilters}
+        onClose={jest.fn()}
+      />
+    );
+
+    // Change type to "Cleaning"
+    getByTestId('type-dropdown').props.onChange({ target: { value: 'Cleaning' } });
+    
+    // Change min price
+    fireEvent(getByTestId('min-price-slider'), 'valueChange', 500);
+
+    // Change max price
+    fireEvent(getByTestId('max-price-slider'), 'valueChange', 5000); // max
+
+    fireEvent.press(getByText('Apply'));
+
+    // setFilters should be called with updated values
+    expect(setFilters).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'Cleaning',
+        minPrice: 500,
+        maxPrice: 5000,
+      })
+    );
+  });
+
+  it('resets filters when Clear is pressed', () => {
+    const setFilters = jest.fn();
+    const { getByText } = render(
+      <FilterModal
+        visible={true}
+        filters={{ type: 'Cleaning', minPrice: 100, maxPrice: 5000 }}
+        setFilters={setFilters}
+        onClose={jest.fn()}
+      />
+    );
+
+    fireEvent.press(getByText('Clear'));
+  });
+});
+```
+
+### HomeRequest
+
+Here we test the following
+- Buttons are rendered
+- Items are rendered
+
+```javascript
+import React from 'react';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import HomeRequest from '../Home/homeTabs/HomeRequest';
+
+jest.mock('../server/supabase', () => ({
+  supabase: {
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    ilike: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    range: jest.fn().mockReturnThis(),
+  }
+}));
+
+const renderWithNavigation = (ui) =>
+  render(<NavigationContainer>{ui}</NavigationContainer>);
+
+describe('HomeRequest', () => {
+  it('renders search input and filter button', () => {
+    const { getByPlaceholderText, getByTestId } = renderWithNavigation(<HomeRequest />);
+    expect(getByPlaceholderText('Search listings...')).toBeTruthy();
+    expect(getByTestId('filterButton')).toBeTruthy();
+  });
+
+  it('shows no listings message when items is empty', async () => {
+    const { getByText } = renderWithNavigation(<HomeRequest />);
+    await waitFor(() => {
+      expect(getByText(/No Listing matches your search/i)).toBeTruthy();
+    });
+  });
+
+  it('clears search text when clear button is pressed', async () => {
+    const { getByPlaceholderText, getByTestId, queryByDisplayValue } = renderWithNavigation(<HomeRequest />);
+    const input = getByPlaceholderText('Search listings...');
+    fireEvent.changeText(input, 'test');
+    expect(queryByDisplayValue('test')).toBeTruthy();
+    const clearBtn = getByTestId('clearSearchButton');
+    fireEvent.press(clearBtn);
+    expect(queryByDisplayValue('test')).toBeNull();
+  });
+});
+```
+
+### HomeService
+
+This test is similar to HomeRequest with a few changes
+
+```javascript
+import React from 'react';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import HomeService from '../Home/homeTabs/HomeService';
+
+jest.mock('../server/supabase', () => ({
+  supabase: {
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    ilike: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    range: jest.fn().mockReturnThis(),
+  },
+}));
+
+const renderWithNavigation = (ui) =>
+  render(<NavigationContainer>{ui}</NavigationContainer>);
+
+describe('HomeService', () => {
+  it('renders search input and filter button', () => {
+    const { getByPlaceholderText, getByTestId } = renderWithNavigation(<HomeService />);
+    expect(getByPlaceholderText('Search listings...')).toBeTruthy();
+    expect(getByTestId('filterButton')).toBeTruthy();
+  });
+
+  it('shows no listings message when items is empty', async () => {
+    const { getByText } = renderWithNavigation(<HomeService />);
+    await waitFor(() => {
+      expect(getByText(/No Listing matches your search/i)).toBeTruthy();
+    });
+  });
+
+  it('clears search text when clear button is pressed', async () => {
+    const { getByPlaceholderText, getByTestId, queryByDisplayValue } = renderWithNavigation(<HomeService />);
+    const input = getByPlaceholderText('Search listings...');
+    fireEvent.changeText(input, 'test');
+    expect(queryByDisplayValue('test')).toBeTruthy();
+    const clearBtn = getByTestId('clearSearchButton');
+    fireEvent.press(clearBtn);
+    expect(queryByDisplayValue('test')).toBeNull();
+  });
+});
+```
+
 ### Custom components
 
 Since we're replacing many pre-built components with custom ones, we need to perform rigorous testing to ensure that our custom components serve its capability well.
