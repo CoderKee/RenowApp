@@ -84,7 +84,7 @@ const ReviewModal = ({ visible, onClose, onReviewWritten, item, posterUsername }
 
           <View style={styles.starsContainer}>
             {stars.map((star) => (
-              <TouchableOpacity key={star} onPress={() => handleStarPress(star)}>
+              <TouchableOpacity testID="star-button" key={star} onPress={() => handleStarPress(star)}>
                 <Icon
                   name={star <= rating ? 'star' : 'star-border'}
                   size={40}
@@ -98,11 +98,12 @@ const ReviewModal = ({ visible, onClose, onReviewWritten, item, posterUsername }
             <ReviewInput value={review} setValue={setReview} placeholder="Write your review here..." charLimit={200} />
 
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity onPress={handleCancel} style={[styles.button, styles.cancel]}>
+            <TouchableOpacity testID="cancel-button" onPress={handleCancel} style={[styles.button, styles.cancel]}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
+              testID="submit-button"
               onPress={handleSubmit}
               style={[styles.button, styles.submit]}
               disabled={rating === 0} 
