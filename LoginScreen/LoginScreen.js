@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { supabase } from '../server/supabase.js';
 import { useUser } from '../Home/globalContext/UserContext.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -21,6 +22,7 @@ export default function Testing({ navigation }) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loggedInUser, setLoggedInUser] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const { setUsername } = useUser();
 
@@ -46,6 +48,7 @@ export default function Testing({ navigation }) {
         return;
       }
 
+      setLoading(true);
       const { data: existingUser, error: fetchError } = await supabase
         .from('Users')
         .select('username')
@@ -84,6 +87,7 @@ export default function Testing({ navigation }) {
         .from('Users')
         .insert([{ username, password, email: `${username}@renow.com`}])
         */
+      setLoading(false);
     };
 
 
@@ -94,6 +98,7 @@ export default function Testing({ navigation }) {
         return;
       }
 
+      setLoading(true);
       const { data: user, error } = await supabase
         .from('Users')
         .select('username, password')
@@ -114,7 +119,7 @@ export default function Testing({ navigation }) {
       setPassword("");
       setUsername(username);
       navigation.replace('RootNavigator', {username});
-
+      setLoading(false);
     };
 
 
@@ -166,8 +171,14 @@ export default function Testing({ navigation }) {
                     icon={require("../assets/PasswordIcon.png")}
                   />
                 )}
-
-          <CustomButton onPress={isLogin ? handleLogin : handleSignUp} text={isLogin ? "Login" : "Sign Up"}/>
+          
+          {loading && <ActivityIndicator size="large" color="#0000ff" />}
+          <CustomButton 
+            onPress={isLogin ? handleLogin : handleSignUp} 
+            text={isLogin ? "Login" : "Sign Up"}
+            color={loading? "grey" : "maroon"}
+            disabled={loading}
+          />
           
           <TouchableOpacity
                   onPress={() => setIsLogin(!isLogin)}
