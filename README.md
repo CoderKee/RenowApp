@@ -116,7 +116,7 @@ For android users, the steps are quite simple, albeit you need to allow for the 
 
 1. **Download the APK**
    - Visit the following link to download the latest RenowApp APK file:
-     - [Download RenowApp APK](<https://expo.dev/accounts/coderkee/projects/renowapp/builds/9cd371e7-9ad9-4cfd-8e14-349272f3d60e>)
+     - [Download RenowApp APK](<https://expo.dev/accounts/coderkee/projects/renowapp/builds/1f881a9c-18df-432f-bbdc-e6a2c0bbacc6>)
    - If prompted, allow your browser to download files from unknown sources.
 
 2. **Install the APK**
@@ -1051,11 +1051,11 @@ The different interfaces will be displayed below for user reference:
 
 ### Creating
 
-<img src="READMEimages/Creating.png" alt="Creating" style="width:50%; height:50%;" />
+<img src="READMEimages/Creating.png" alt="Creating" style="width:35%; height:35%;" />
 
 ### Editing
 
-<img src="READMEimages/Editing.png" alt="Editing" style="width:50%; height:50%;" />
+<img src="READMEimages/Editing.png" alt="Editing" style="width:35%; height:35%;" />
 
 ---
 
